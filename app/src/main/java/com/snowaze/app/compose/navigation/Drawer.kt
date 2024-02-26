@@ -9,13 +9,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -38,7 +35,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -163,7 +159,6 @@ fun DrawerContent(items: List<NavigationDrawerItem>) {
                 items = items,
                 paddingValues = innerPadding,
                 navController = navController,
-                scope = scope
             )
         }
     }
@@ -174,7 +169,6 @@ fun ScreenContent(
     items: List<NavigationDrawerItem>,
     paddingValues: PaddingValues,
     navController: NavHostController,
-    scope: CoroutineScope
 ) {
     Box(
         modifier = Modifier.padding(paddingValues)
