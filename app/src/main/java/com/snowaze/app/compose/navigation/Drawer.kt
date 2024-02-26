@@ -43,7 +43,6 @@ import com.snowaze.app.compose.home.HomeScreen
 import com.snowaze.app.compose.itinerary.ItineraryScreen
 import com.snowaze.app.compose.settings.SettingsScreen
 import com.snowaze.app.data.navigation.NavigationDrawerItem
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 val items = listOf(
