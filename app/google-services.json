@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "552161327479",
+    "project_id": "snowaze",
+    "storage_bucket": "snowaze.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:552161327479:android:8ea4dcaf22de85c9250972",
+        "android_client_info": {
+          "package_name": "com.snowaze.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIuFTF8FxcAdnswrbqBydhiTtoTfepRSI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
