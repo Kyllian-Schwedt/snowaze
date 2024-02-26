@@ -12,7 +12,12 @@
           "package_name": "com.snowaze.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "552161327479-5ac2rc45lcv65sn5lmpb2vdsa7mcnvmo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBIuFTF8FxcAdnswrbqBydhiTtoTfepRSI"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "552161327479-5ac2rc45lcv65sn5lmpb2vdsa7mcnvmo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
