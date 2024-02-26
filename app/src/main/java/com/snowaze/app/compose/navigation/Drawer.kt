@@ -1,16 +1,21 @@
 package com.snowaze.app.compose.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -33,7 +38,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.snowaze.app.compose.home.HomeScreen
+import com.snowaze.app.compose.itinerary.ItineraryScreen
+import com.snowaze.app.compose.settings.SettingsScreen
 import com.snowaze.app.data.navigation.NavigationDrawerItem
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 val items = listOf(
@@ -41,17 +55,23 @@ val items = listOf(
         title = "Home",
         selectedIcon = Icons.Default.Home,
         unselectedIcon = Icons.Outlined.Home,
+        route = "home",
+        content = { HomeScreen() },
     ),
     NavigationDrawerItem(
-        title = "Profile",
-        selectedIcon = Icons.Default.Person,
-        unselectedIcon = Icons.Outlined.Person,
-        badgeCount = 0
+        title = "Itinerary",
+        selectedIcon = Icons.Default.LocationOn,
+        unselectedIcon = Icons.Outlined.LocationOn,
+        badgeCount = 0,
+        route = "itinerary",
+        content = { ItineraryScreen() }
     ),
     NavigationDrawerItem(
         title = "Settings",
         selectedIcon = Icons.Default.Settings,
         unselectedIcon = Icons.Outlined.Settings,
+        route = "settings",
+        content = { SettingsScreen() }
     )
 )
 
@@ -59,6 +79,7 @@ val items = listOf(
 @Composable
 fun DrawerContent(items: List<NavigationDrawerItem>) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val navController = rememberNavController()
     val scope = rememberCoroutineScope()
     var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
     ModalNavigationDrawer(
@@ -72,6 +93,7 @@ fun DrawerContent(items: List<NavigationDrawerItem>) {
                         },
                         selected = index == selectedItemIndex,
                         onClick = {
+                            navController.navigate(item.route)
                             selectedItemIndex = index
                             scope.launch {
                                 drawerState.close()
@@ -121,7 +143,10 @@ fun DrawerContent(items: List<NavigationDrawerItem>) {
                     items.forEachIndexed { index, item ->
                         NavigationBarItem(
                             selected = index == selectedItemIndex,
-                            onClick = { selectedItemIndex = index },
+                            onClick = {
+                                selectedItemIndex = index
+                                navController.navigate(item.route)
+                            },
                             icon = {
                                 Icon(
                                     imageVector = if (index == selectedItemIndex) {
@@ -133,12 +158,37 @@ fun DrawerContent(items: List<NavigationDrawerItem>) {
                     }
                 }
             }
-        ) {
-            innerPadding ->
-            Text(
-                text = items[selectedItemIndex].title,
-                modifier = Modifier.padding(innerPadding)
+        ) { innerPadding ->
+            ScreenContent(
+                items = items,
+                paddingValues = innerPadding,
+                navController = navController,
+                scope = scope
             )
         }
+    }
+}
+
+@Composable
+fun ScreenContent(
+    items: List<NavigationDrawerItem>,
+    paddingValues: PaddingValues,
+    navController: NavHostController,
+    scope: CoroutineScope
+) {
+    Box(
+        modifier = Modifier.padding(paddingValues)
+    ) {
+        NavHost(
+            navController = navController,
+            startDestination = items.first().route
+        ) {
+            items.forEach { item ->
+                composable(item.route) {
+                    item.content()
+                }
+            }
+        }
+
     }
 }
