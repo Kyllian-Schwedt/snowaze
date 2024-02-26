@@ -1,4 +1,4 @@
-package com.snowaze.app.ui.data
+package com.snowaze.app.data.navigation
 
 import androidx.compose.ui.graphics.vector.ImageVector
 
