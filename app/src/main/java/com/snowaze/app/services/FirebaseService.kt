@@ -18,7 +18,6 @@ import com.snowaze.app.model.Track
 import com.snowaze.app.model.TrackJSON
 import java.util.UUID
 
-
 class FirebaseService {
     companion object {
         private var init = false
@@ -274,6 +273,8 @@ class FirebaseService {
             }
             // Remove the path that are too difficult
             paths = paths.filter { it.all { it is Track && it.difficulty <= maxDifficulty || it is SkiLift } }.toMutableList()
+            // Remove the path that are closed
+            paths = paths.filter { it.all { it is Track && it.status == Status.OPEN || it is SkiLift && it.status == Status.OPEN } }.toMutableList()
             // Take the 5 shortest path
             paths.sortBy { it.size }
             if (paths.size > 5) {
