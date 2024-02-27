@@ -2,13 +2,6 @@ package com.snowaze.app.model
 
 import java.util.UUID
 
-enum class Difficulty {
-    GREEN,
-    BLUE,
-    RED,
-    BLACK
-}
-
 interface IPath {
     var id: UUID;
     var name: String;
@@ -22,15 +15,22 @@ class Track(
     override var hop: List<IPath>,
     override var comments: List<Comment>,
     val difficulty: Difficulty,
-    val status: Status,
+    var status: Status,
 ) : IPath {
     public fun toJSON(): TrackJSON {
+        val hop : List<String>;
+        if (this.hop.isEmpty()) {
+            hop = listOf()
+        } else {
+            hop = this.hop.map { it.id.toString() }
+        }
         return TrackJSON(
-            id = this.id,
+            id = this.id.toString(),
             name = this.name,
             comments = this.comments,
             difficulty = this.difficulty.toString(),
-            status = this.status.toString()
+            status = this.status.toString(),
+            hop = hop
         )
     }
 }
@@ -40,16 +40,23 @@ class SkiLift(
     override var name: String,
     override var hop: List<IPath>,
     override var comments: List<Comment>,
-    val type: SkiLiftType,
-    val status: Status,
+    var type: SkiLiftType,
+    var status: Status,
 ) : IPath {
     public fun toJSON(): SkiLiftJSON {
+        val hop : List<String>;
+        if (this.hop.isEmpty()) {
+            hop = listOf()
+        } else {
+            hop = this.hop.map { it.id.toString() }
+        }
         return SkiLiftJSON(
-            id = this.id,
+            id = this.id.toString(),
             name = this.name,
             comments = this.comments,
             type = this.type.toString(),
-            status = this.status.toString()
+            status = this.status.toString(),
+            hop = hop
         )
     }
 }
