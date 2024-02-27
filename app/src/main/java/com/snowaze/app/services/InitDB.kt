@@ -1,11 +1,8 @@
 package com.snowaze.app.services
 
 import android.content.Context
-import android.util.Log
 import com.google.gson.Gson
 import com.snowaze.app.model.Difficulty
-import com.snowaze.app.model.HopJSON
-import com.snowaze.app.model.IPath
 import com.snowaze.app.model.JsonModel
 import com.snowaze.app.model.SkiLift
 import com.snowaze.app.model.SkiLiftType
@@ -23,7 +20,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.GREEN,
-                Status.OPEN
+                Status.OPENED
             )
             val bambinos = Track(
                 UUID.randomUUID(),
@@ -31,7 +28,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.GREEN,
-                Status.OPEN
+                Status.OPENED
             )
             val monthery = Track(
                 UUID.randomUUID(),
@@ -39,7 +36,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.GREEN,
-                Status.OPEN
+                Status.OPENED
             )
             val jonctionBasse = Track(
                 UUID.randomUUID(),
@@ -47,7 +44,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.GREEN,
-                Status.OPEN
+                Status.OPENED
             )
             val forest = Track(
                 UUID.randomUUID(),
@@ -55,7 +52,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.GREEN,
-                Status.OPEN
+                Status.OPENED
             )
             val bouticariVert = Track(
                 UUID.randomUUID(),
@@ -63,7 +60,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.GREEN,
-                Status.OPEN
+                Status.OPENED
             )
 
             val casses = Track(
@@ -72,7 +69,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.BLUE,
-                Status.OPEN
+                Status.OPENED
             )
             val rhodos = Track(
                 UUID.randomUUID(),
@@ -80,7 +77,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.BLUE,
-                Status.OPEN
+                Status.OPENED
             )
             val nibettes = Track(
                 UUID.randomUUID(),
@@ -88,7 +85,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.BLUE,
-                Status.OPEN
+                Status.OPENED
             )
             val sDuChamois = Track(
                 UUID.randomUUID(),
@@ -96,7 +93,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.BLUE,
-                Status.OPEN
+                Status.OPENED
             )
             val lampionsI = Track(
                 UUID.randomUUID(),
@@ -104,7 +101,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.BLUE,
-                Status.OPEN
+                Status.OPENED
             )
             val lampionsII = Track(
                 UUID.randomUUID(),
@@ -112,7 +109,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.BLUE,
-                Status.OPEN
+                Status.OPENED
             )
             val clouzeaux = Track(
                 UUID.randomUUID(),
@@ -120,7 +117,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.BLUE,
-                Status.OPEN
+                Status.OPENED
             )
             val gourq = Track(
                 UUID.randomUUID(),
@@ -128,23 +125,23 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.BLUE,
-                Status.OPEN
+                Status.OPENED
             )
             val arbre = Track(
                 UUID.randomUUID(),
-                "L'arbre",
+                "L arbre",
                 emptyList(),
                 emptyList(),
                 Difficulty.BLUE,
-                Status.OPEN
+                Status.OPENED
             )
             val inglin = Track(
                 UUID.randomUUID(),
-                "L'inglin",
+                "L inglin",
                 emptyList(),
                 emptyList(),
                 Difficulty.BLUE,
-                Status.OPEN
+                Status.OPENED
             )
             val bouticariBleu = Track(
                 UUID.randomUUID(),
@@ -152,7 +149,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.BLUE,
-                Status.OPEN
+                Status.OPENED
             )
             val gerabio = Track(
                 UUID.randomUUID(),
@@ -160,7 +157,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.BLUE,
-                Status.OPEN
+                Status.OPENED
             )
 
             val jockeys = Track(
@@ -169,7 +166,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.RED,
-                Status.OPEN
+                Status.OPENED
             )
             val chamoisRed = Track(
                 UUID.randomUUID(),
@@ -177,15 +174,15 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.RED,
-                Status.OPEN
+                Status.OPENED
             )
             val ecureuil = Track(
                 UUID.randomUUID(),
-                "L'écureuil",
+                "L écureuil",
                 emptyList(),
                 emptyList(),
                 Difficulty.RED,
-                Status.OPEN
+                Status.OPENED
             )
             val mandarine = Track(
                 UUID.randomUUID(),
@@ -193,7 +190,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.RED,
-                Status.OPEN
+                Status.OPENED
             )
             val preMeanI = Track(
                 UUID.randomUUID(),
@@ -201,7 +198,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.RED,
-                Status.OPEN
+                Status.OPENED
             )
             val preMeanII = Track(
                 UUID.randomUUID(),
@@ -209,15 +206,15 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.RED,
-                Status.OPEN
+                Status.OPENED
             )
             val ousselat = Track(
                 UUID.randomUUID(),
-                "L'ousselat",
+                "L ousselat",
                 emptyList(),
                 emptyList(),
                 Difficulty.RED,
-                Status.OPEN
+                Status.OPENED
             )
             val barrigart = Track(
                 UUID.randomUUID(),
@@ -225,7 +222,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.RED,
-                Status.OPEN
+                Status.OPENED
             )
             val draye = Track(
                 UUID.randomUUID(),
@@ -233,7 +230,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.RED,
-                Status.OPEN
+                Status.OPENED
             )
             val sagnieres = Track(
                 UUID.randomUUID(),
@@ -241,7 +238,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.RED,
-                Status.OPEN
+                Status.OPENED
             )
             val rougeBouticari = Track(
                 UUID.randomUUID(),
@@ -249,7 +246,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.RED,
-                Status.OPEN
+                Status.OPENED
             )
 
             val lievre = Track(
@@ -258,7 +255,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.BLACK,
-                Status.OPEN
+                Status.OPENED
             )
             val tetras = Track(
                 UUID.randomUUID(),
@@ -266,7 +263,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 Difficulty.BLACK,
-                Status.OPEN
+                Status.OPENED
             )
 
             // Remontées
@@ -276,7 +273,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 SkiLiftType.TBAR,
-                Status.OPEN
+                Status.OPENED
             )
             val torresLift = SkiLift(
                 UUID.randomUUID(),
@@ -284,7 +281,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 SkiLiftType.TBAR,
-                Status.OPEN
+                Status.OPENED
             )
             val moulinLift = SkiLift(
                 UUID.randomUUID(),
@@ -292,7 +289,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 SkiLiftType.TBAR,
-                Status.OPEN
+                Status.OPENED
             )
             val amoureuxLift = SkiLift(
                 UUID.randomUUID(),
@@ -300,7 +297,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 SkiLiftType.TBAR,
-                Status.OPEN
+                Status.OPENED
             )
             val beauregardILift = SkiLift(
                 UUID.randomUUID(),
@@ -308,7 +305,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 SkiLiftType.TBAR,
-                Status.OPEN
+                Status.OPENED
             )
             val beauregardIILift = SkiLift(
                 UUID.randomUUID(),
@@ -316,7 +313,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 SkiLiftType.TBAR,
-                Status.OPEN
+                Status.OPENED
             )
             val steMarieMadeleineLift = SkiLift(
                 UUID.randomUUID(),
@@ -324,7 +321,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 SkiLiftType.TBAR,
-                Status.OPEN
+                Status.OPENED
             )
             val bouticariILift = SkiLift(
                 UUID.randomUUID(),
@@ -332,7 +329,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 SkiLiftType.TBAR,
-                Status.OPEN
+                Status.OPENED
             )
             val bouticariIILift = SkiLift(
                 UUID.randomUUID(),
@@ -340,7 +337,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 SkiLiftType.TBAR,
-                Status.OPEN
+                Status.OPENED
             )
             val bouticariIIILift = SkiLift(
                 UUID.randomUUID(),
@@ -348,7 +345,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 SkiLiftType.TBAR,
-                Status.OPEN
+                Status.OPENED
             )
             val grandSerreLift = SkiLift(
                 UUID.randomUUID(),
@@ -356,7 +353,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 SkiLiftType.TBAR,
-                Status.OPEN
+                Status.OPENED
             )
 
             val burgeLift = SkiLift(
@@ -365,7 +362,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 SkiLiftType.CHAIRLIFT,
-                Status.OPEN
+                Status.OPENED
             )
             val cassettesLift = SkiLift(
                 UUID.randomUUID(),
@@ -373,7 +370,7 @@ class InitDB {
                 emptyList(),
                 emptyList(),
                 SkiLiftType.CHAIRLIFT,
-                Status.OPEN
+                Status.OPENED
             )
 
             // Hop Green
@@ -407,7 +404,7 @@ class InitDB {
             inglin.hop = listOf(grandSerreLift, forest, bouticariVert, bouticariBleu);
 
             // Hop Red
-            jockeys.hop = listOf(troikaLift, torresLift, burgeLift);
+            jockeys.hop = listOf(troikaLift, torresLift, burgeLift, amoureuxLift);
             chamoisRed.hop = listOf(troikaLift, torresLift, burgeLift);
             ecureuil.hop = listOf(jockeys, chamoisRed, sDuChamois);
             mandarine.hop = listOf(jockeys, chamoisRed, sDuChamois);
@@ -498,19 +495,13 @@ class InitDB {
             // Create a json with the list of ski lifts
             val jsonSkiLifts = skiLifts.map { it.toJSON() }
 
-            // Create a json with the list of hop for each track and each ski lift
-            val paths: List<IPath> = tracks + skiLifts
-            val jsonPaths = paths.map { it.id to it.hop.map { it.id } };
-            Log.d("JSON", jsonPaths.toString())
-            val jsonHop: MutableList<HopJSON> = mutableListOf()
-            jsonPaths.forEach { (id, hop) ->
-                val hopList = hop.map { it }
-                jsonHop += HopJSON(id, hopList)
-            }
-
             // Final JSON
+            val jsonModel = JsonModel(
+                jsonTracks.associateBy { it.id },
+                jsonSkiLifts.associateBy { it.id },
+            )
 
-            return Gson().toJson(JsonModel(jsonTracks, jsonSkiLifts, jsonHop))
+            return Gson().toJson(jsonModel);
         }
     }
 }
