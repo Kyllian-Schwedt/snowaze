@@ -18,6 +18,7 @@ import com.snowaze.app.model.Track
 import com.snowaze.app.model.TrackJSON
 import java.util.UUID
 
+
 class FirebaseService {
     companion object {
         private var init = false
@@ -176,10 +177,6 @@ class FirebaseService {
                         }
                         // Add listener on child for skiLifts
                         ref.child("skiLifts").addChildEventListener(childEventListener)
-                        val path = getPath(UUID.fromString("87bf4a3c-563d-4796-8733-4ce05998e089"), UUID.fromString("362c471b-e5d2-4896-94b0-eefff3d8e695"), Difficulty.GREEN)
-                        for (p in path) {
-                            Log.d("FirebaseService", "Path: ${p.map { it.name }}")
-                        }
                     }
                 }
             } catch (e: Exception) {
