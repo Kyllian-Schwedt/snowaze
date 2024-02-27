@@ -1,7 +1,12 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    id("kotlin-android")
+    id("com.google.devtools.ksp") version "1.9.0-1.0.11"
     id("com.google.gms.google-services")
+    id("org.jetbrains.kotlin.android")
+    id("com.google.dagger.hilt.android")
+    id("dagger.hilt.android.plugin")
+    id("com.ncorti.ktfmt.gradle") version "0.10.0"
 }
 
 android {
@@ -14,6 +19,7 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+        multiDexEnabled = true
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -39,6 +45,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -48,6 +55,10 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+}
+
+ktfmt {
+    googleStyle()
 }
 
 dependencies {
@@ -60,6 +71,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("com.google.firebase:firebase-firestore-ktx:24.10.2")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -73,4 +85,12 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:21.0.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
+    implementation("androidx.preference:preference-ktx:1.2.1")
+    //kapt("com.google.dagger:dagger-compiler:2.50")
+    implementation("com.google.dagger:hilt-android:2.47")
+    //kapt("com.google.dagger:hilt-android-compiler:2.50")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    ksp("com.google.dagger:hilt-compiler:2.47")
+
+    kspAndroidTest("com.google.dagger:hilt-compiler:2.50")
 }
