@@ -23,8 +23,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import com.snowaze.app.compose.home.skiLift.SkiLiftScreen
 import com.snowaze.app.compose.home.track.TrackScreen
 import com.snowaze.app.model.Difficulty
+import com.snowaze.app.model.SkiLift
+import com.snowaze.app.model.SkiLiftType
 import com.snowaze.app.model.Status
 import com.snowaze.app.model.Track
 import kotlinx.coroutines.launch
@@ -83,7 +86,14 @@ fun HomeScreen() {
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    TrackScreen(tracks =List(1) { track })
+                    when (HomeTabs.entries[pagerState.currentPage]) {
+                        HomeTabs.Tracks -> {
+                            TrackScreen(tracks = listOf(track))
+                        }
+                        HomeTabs.SkiLifts -> {
+                            SkiLiftScreen(skiLifts = listOf(skiLift))
+                        }
+                    }
                 }
             }
         }
@@ -93,6 +103,15 @@ fun HomeScreen() {
 val track = Track(
     name = "Track 1",
     difficulty = Difficulty.BLACK,
+    status = Status.OPEN,
+    hop = emptyList(),
+    comments = emptyList(),
+    id = UUID.randomUUID()
+)
+
+val skiLift = SkiLift(
+    name = "Ski Lift 1",
+    type = SkiLiftType.CHAIRLIFT,
     status = Status.OPEN,
     hop = emptyList(),
     comments = emptyList(),
