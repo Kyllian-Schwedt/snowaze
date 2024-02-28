@@ -23,7 +23,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import com.snowaze.app.compose.home.track.TrackScreen
+import com.snowaze.app.model.Difficulty
+import com.snowaze.app.model.Status
+import com.snowaze.app.model.Track
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -78,9 +83,18 @@ fun HomeScreen() {
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = HomeTabs.entries[selectedTabIndex.value].text)
+                    TrackScreen(tracks =List(1) { track })
                 }
             }
         }
     }
 }
+
+val track = Track(
+    name = "Track 1",
+    difficulty = Difficulty.BLACK,
+    status = Status.OPEN,
+    hop = emptyList(),
+    comments = emptyList(),
+    id = UUID.randomUUID()
+)
