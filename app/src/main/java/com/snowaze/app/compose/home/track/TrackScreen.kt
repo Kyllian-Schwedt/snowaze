@@ -50,7 +50,7 @@ fun TrackCard(track: Track) {
     OutlinedCard(onClick = { /*TODO*/ },
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 100.dp),
+            .heightIn(min = 100.dp, max = 110.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
@@ -69,11 +69,10 @@ fun TrackCard(track: Track) {
 
            ) {
                 Text(
-                    modifier = Modifier.padding(bottom = 30.dp),
+                    modifier = Modifier.padding(bottom = 15.dp),
                     text = track.name,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold)
-                // A color square to represent the difficulty of the track
                 Box(
                     modifier = Modifier
                         .requiredWidth(20.dp)
@@ -85,21 +84,16 @@ fun TrackCard(track: Track) {
                                 Difficulty.BLUE -> Color.Blue
                                 Difficulty.RED -> Color.Red
                                 Difficulty.BLACK -> Color.Black
-                                else -> {
-                                    Color.Gray}
                             }
                         )
                 )
 
            }
-            //text to display is open in green or closed in red
             Text(
                 text = track.status.toString(),
                 color = when (track.status) {
                     Status.OPEN -> Color.Green
                     Status.CLOSED -> Color.Red
-                    else -> {
-                        Color.Gray}
                 },
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
