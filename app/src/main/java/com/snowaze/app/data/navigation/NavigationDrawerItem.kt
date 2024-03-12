@@ -2,6 +2,7 @@ package com.snowaze.app.data.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavHostController
 
 data class NavigationDrawerItem(
     val title: String,
@@ -9,5 +10,5 @@ data class NavigationDrawerItem(
     val unselectedIcon: ImageVector,
     val badgeCount: Int? = null,
     val route: String,
-    val content: @Composable () -> Unit
+    val content: @Composable (NavHostController) -> Unit
     )

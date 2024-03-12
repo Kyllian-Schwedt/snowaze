@@ -30,13 +30,14 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.snowaze.app.model.Difficulty
 import com.snowaze.app.model.Status
 import com.snowaze.app.model.Track
 
 
 @Composable
-fun TrackScreen(tracks: List<Track>) {
+fun TrackScreen(tracks: List<Track>, navController: NavHostController) {
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -49,17 +50,18 @@ fun TrackScreen(tracks: List<Track>) {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun TrackCard(track: Track) {
-
-
-    OutlinedCard(onClick = { /*TODO*/ },
+    OutlinedCard(
         modifier = Modifier
-            .fillMaxWidth()
             .combinedClickable(
-                onClick = { /*TODO*/ },
+                enabled = true,
+                onClick = {
+                    /*TODO*/
+                },
                 onLongClick = {
-
+                    /*TODO*/
                 }
             )
+            .fillMaxWidth()
             .heightIn(min = 100.dp, max = 110.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
