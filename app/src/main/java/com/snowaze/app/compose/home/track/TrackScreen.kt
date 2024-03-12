@@ -42,14 +42,14 @@ fun TrackScreen(tracks: List<Track>, navController: NavHostController) {
         modifier = Modifier.fillMaxSize()
     ) {
         itemsIndexed(tracks) { index, track ->
-            TrackCard(track = track)
+            TrackCard(track = track, navController = navController)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun TrackCard(track: Track) {
+fun TrackCard(track: Track, navController: NavHostController) {
     OutlinedCard(
         modifier = Modifier
             .combinedClickable(

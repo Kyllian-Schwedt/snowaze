@@ -8,9 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -44,172 +41,147 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.snowaze.app.R
-import com.snowaze.app.compose.home.HomeScreen
-import com.snowaze.app.compose.itinerary.ItineraryScreen
-import com.snowaze.app.compose.settings.SettingsScreen
 import com.snowaze.app.data.navigation.NavigationDrawerItem
 import com.snowaze.app.ui.theme.AppTheme
 import kotlinx.coroutines.launch
 
-
-val items = listOf(
-    NavigationDrawerItem(
-        title = "Home",
-        selectedIcon = Icons.Outlined.Home,
-        unselectedIcon = Icons.Outlined.Home,
-        route = "home",
-    ) { navController: NavHostController -> HomeScreen(navController) },
-    NavigationDrawerItem(
-        title = "Itinerary",
-        selectedIcon = Icons.Outlined.LocationOn,
-        unselectedIcon = Icons.Outlined.LocationOn,
-        badgeCount = 0,
-        route = "itinerary",
-    ) { navController: NavHostController -> ItineraryScreen(navController) },
-        NavigationDrawerItem(
-            title = "Settings",
-            selectedIcon = Icons.Outlined.Settings,
-            unselectedIcon = Icons.Outlined.Settings,
-            route = "settings",
-        ) { navController: NavHostController -> SettingsScreen(navController) }
-)
-        @SuppressLint("ResourceAsColor")
-        @OptIn(ExperimentalMaterial3Api::class)
-        @Composable
-        fun DrawerContent(items: List<NavigationDrawerItem>) {
-            AppTheme {
-                val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-                val scope = rememberCoroutineScope()
-                val navController = rememberNavController()
-                var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
-                ModalNavigationDrawer(
-                    drawerContent = {
-                        ModalDrawerSheet {
-                            Spacer(modifier = Modifier.height(16.dp))
-                            items.forEachIndexed { index, item ->
-                                NavigationDrawerItem(
-                                    colors = NavigationDrawerItemDefaults.colors(
-                                        selectedContainerColor = MaterialTheme.colorScheme.onPrimary,
-                                    ),
-                                    label = {
-                                        Text(text = item.title)
-                                    },
-                                    selected = index == selectedItemIndex,
-                                    onClick = {
-                                        navController.navigate(item.route)
-                                        selectedItemIndex = index
-                                        scope.launch {
-                                            drawerState.close()
-                                        }
-                                    },
-                                    icon = {
-                                        Icon(
-                                            imageVector = if (index == selectedItemIndex) {
-                                                item.selectedIcon
-                                            } else item.unselectedIcon,
-                                            contentDescription = item.title
-                                        )
-                                    },
-                                    badge = {
-                                        item.badgeCount?.let {
-                                            Text(text = item.badgeCount.toString())
-                                        }
-                                    },
-                                    modifier = Modifier
-                                        .padding(NavigationDrawerItemDefaults.ItemPadding)
+@SuppressLint("ResourceAsColor")
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DrawerContent(menuItems: List<NavigationDrawerItem>) {
+    AppTheme {
+        val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+        val scope = rememberCoroutineScope()
+        val navController = rememberNavController()
+        var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
+        ModalNavigationDrawer(
+            drawerContent = {
+                ModalDrawerSheet {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    menuItems.forEachIndexed { index, item ->
+                        NavigationDrawerItem(
+                            colors = NavigationDrawerItemDefaults.colors(
+                                selectedContainerColor = MaterialTheme.colorScheme.onPrimary,
+                            ),
+                            label = {
+                                Text(text = item.title)
+                            },
+                            selected = index == selectedItemIndex,
+                            onClick = {
+                                navController.navigate(item.navigationItem.route)
+                                selectedItemIndex = index
+                                scope.launch {
+                                    drawerState.close()
+                                }
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = if (index == selectedItemIndex) {
+                                        item.selectedIcon
+                                    } else item.unselectedIcon,
+                                    contentDescription = item.title
                                 )
-                            }
-                        }
-                    },
-                    drawerState = drawerState,
-                ) {
-                    Scaffold(
-                        topBar = {
-                            TopAppBar(
-                                colors = TopAppBarDefaults.topAppBarColors(MaterialTheme.colorScheme.primary),
-                                title = { Text(text = items[selectedItemIndex].title) },
-                                navigationIcon = {
-                                    IconButton(onClick = {
-                                        scope.launch {
-                                            drawerState.open()
-                                        }
-                                    }) {
-                                        Icon(
-                                            imageVector = Icons.Default.Menu,
-                                            contentDescription = "Menu"
-                                        )
-                                    }
+                            },
+                            badge = {
+                                item.badgeCount?.let {
+                                    Text(text = item.badgeCount.toString())
                                 }
-                            )
-                        },
-                        bottomBar = {
-                            NavigationBar(
-                                modifier = Modifier
-                                    .drawBehind {
-                                        val borderSize = 1.dp.toPx()
-                                        drawLine(
-                                            color = Color(R.color.black),
-                                            start = Offset(0f, 0f),
-                                            end = Offset(size.width, 0f),
-                                            strokeWidth = borderSize
-                                        )
-                                    },
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            ) {
-                                items.forEachIndexed { index, item ->
-                                    NavigationBarItem(
-                                        colors = NavigationBarItemDefaults.colors(
-                                            selectedIconColor = MaterialTheme.colorScheme.primary,
-                                            selectedTextColor = MaterialTheme.colorScheme.primary,
-                                        ),
-                                        selected = index == selectedItemIndex,
-                                        onClick = {
-                                            selectedItemIndex = index
-                                            navController.navigate(item.route)
-                                        },
-                                        icon = {
-                                            Icon(
-                                                imageVector = if (index == selectedItemIndex) {
-                                                    item.selectedIcon
-                                                } else item.unselectedIcon,
-                                                contentDescription = item.title
-                                            )
-                                        },
-                                        label = { Text(text = item.title) }
-                                    )
-                                }
-                            }
-                        }
-                    ) { innerPadding ->
-                        ScreenContent(
-                            items = items,
-                            paddingValues = innerPadding,
-                            navController = navController,
+                            },
+                            modifier = Modifier
+                                .padding(NavigationDrawerItemDefaults.ItemPadding)
                         )
                     }
                 }
-            }
-        }
-
-        @Composable
-        fun ScreenContent(
-            items: List<NavigationDrawerItem>,
-            paddingValues: PaddingValues,
-            navController: NavHostController,
+            },
+            drawerState = drawerState,
         ) {
-            Box(
-                modifier = Modifier.padding(paddingValues)
-            ) {
-                NavHost(
-                    navController = navController,
-                    startDestination = items.first().route
-                ) {
-                    items.forEach { item ->
-                        composable(item.route) {
-                            item.content(navController)
+            Scaffold(
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.topAppBarColors(MaterialTheme.colorScheme.primary),
+                        title = { Text(text = menuItems[selectedItemIndex].title) },
+                        navigationIcon = {
+                            IconButton(onClick = {
+                                scope.launch {
+                                    drawerState.open()
+                                }
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.Menu,
+                                    contentDescription = "Menu"
+                                )
+                            }
+                        }
+                    )
+                },
+                bottomBar = {
+                    NavigationBar(
+                        modifier = Modifier
+                            .drawBehind {
+                                val borderSize = 1.dp.toPx()
+                                drawLine(
+                                    color = Color(R.color.black),
+                                    start = Offset(0f, 0f),
+                                    end = Offset(size.width, 0f),
+                                    strokeWidth = borderSize
+                                )
+                            },
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    ) {
+                        menuItems.forEachIndexed { index, item ->
+                            NavigationBarItem(
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                                ),
+                                selected = index == selectedItemIndex,
+                                onClick = {
+                                    selectedItemIndex = index
+                                    navController.navigate(item.navigationItem.route)
+                                },
+                                icon = {
+                                    Icon(
+                                        imageVector = if (index == selectedItemIndex) {
+                                            item.selectedIcon
+                                        } else item.unselectedIcon,
+                                        contentDescription = item.title
+                                    )
+                                },
+                                label = { Text(text = item.title) }
+                            )
                         }
                     }
                 }
-
+            ) { innerPadding ->
+                ScreenContent(
+                    menuItems = menuItems,
+                    paddingValues = innerPadding,
+                    navController = navController,
+                )
             }
         }
+    }
+}
+
+@Composable
+fun ScreenContent(
+    menuItems: List<NavigationDrawerItem>,
+    paddingValues: PaddingValues,
+    navController: NavHostController,
+) {
+    Box(
+        modifier = Modifier.padding(paddingValues)
+    ) {
+        NavHost(
+            navController = navController,
+            startDestination = menuItems.first().navigationItem.route
+        ) {
+            menuItems.forEach { item ->
+                composable(item.navigationItem.route) {
+                    item.navigationItem.content(navController)
+                }
+            }
+        }
+
+    }
+}
