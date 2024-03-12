@@ -1,6 +1,8 @@
 package com.snowaze.app.compose.home.skiLift
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,27 +28,37 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.snowaze.app.R
 import com.snowaze.app.model.SkiLift
 import com.snowaze.app.model.SkiLiftType
 import com.snowaze.app.model.Status
 
 @Composable
-fun SkiLiftScreen(skiLifts: List<SkiLift>) {
+fun SkiLiftScreen(skiLifts: List<SkiLift>, navController: NavHostController) {
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
         itemsIndexed(skiLifts) { index, skiLift ->
-            SkiLiftCard(skiLift = skiLift)
+            SkiLiftCard(skiLift = skiLift, navController = navController)
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun SkiLiftCard(skiLift: SkiLift) {
-    OutlinedCard(onClick = { /*TODO*/ },
+fun SkiLiftCard(skiLift: SkiLift, navController: NavHostController) {
+    OutlinedCard(
         modifier = Modifier
+            .combinedClickable(
+                enabled = true,
+                onClick = {
+                    /*TODO*/
+                },
+                onLongClick = {
+                    /*TODO*/
+                }
+            )
             .fillMaxWidth()
             .heightIn(min = 100.dp, max = 110.dp),
         colors = CardDefaults.cardColors(

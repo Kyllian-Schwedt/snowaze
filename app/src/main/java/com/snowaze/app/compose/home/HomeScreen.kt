@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.navigation.NavHostController
 import com.snowaze.app.compose.home.skiLift.SkiLiftScreen
 import com.snowaze.app.compose.home.track.TrackScreen
 import com.snowaze.app.model.Difficulty
@@ -35,7 +36,7 @@ import java.util.UUID
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavHostController) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { HomeTabs.entries.size })
     val selectedTabIndex = remember { derivedStateOf { pagerState.currentPage } }
@@ -88,10 +89,10 @@ fun HomeScreen() {
                 ) {
                     when (HomeTabs.entries[pagerState.currentPage]) {
                         HomeTabs.Tracks -> {
-                            TrackScreen(tracks = listOf(track))
+                            TrackScreen(tracks = listOf(track), navController = navController)
                         }
                         HomeTabs.SkiLifts -> {
-                            SkiLiftScreen(skiLifts = listOf(skiLift))
+                            SkiLiftScreen(skiLifts = listOf(skiLift), navController = navController)
                         }
                     }
                 }
