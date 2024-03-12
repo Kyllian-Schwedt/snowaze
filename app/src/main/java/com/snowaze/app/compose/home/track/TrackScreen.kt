@@ -1,7 +1,9 @@
 package com.snowaze.app.compose.home.track
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,12 +46,20 @@ fun TrackScreen(tracks: List<Track>) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun TrackCard(track: Track) {
+
+
     OutlinedCard(onClick = { /*TODO*/ },
         modifier = Modifier
             .fillMaxWidth()
+            .combinedClickable(
+                onClick = { /*TODO*/ },
+                onLongClick = {
+
+                }
+            )
             .heightIn(min = 100.dp, max = 110.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
