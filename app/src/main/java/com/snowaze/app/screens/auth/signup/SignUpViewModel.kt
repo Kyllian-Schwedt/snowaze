@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.material3.Snackbar
 import androidx.compose.runtime.mutableStateOf
 import com.google.firebase.auth.FirebaseAuthException
+import com.snowaze.app.MAIN_APP
+import com.snowaze.app.SIGN_UP_SCREEN
 import com.snowaze.app.common.ext.isValidEmail
 import com.snowaze.app.common.ext.isValidPassword
 import com.snowaze.app.common.ext.passwordMatches
@@ -39,7 +41,7 @@ class SignUpViewModel @Inject constructor(
         uiState.value = uiState.value.copy(repeatPassword = newValue)
     }
 
-    fun onSignUpClick() {
+    fun onSignUpClick(openAndPopUp: (String, String) -> Unit) {
 
         if (!email.isValidEmail()) {
             SnackbarManager.showMessage(AppText.email_error)
@@ -57,14 +59,8 @@ class SignUpViewModel @Inject constructor(
         }
 
         launchCatching {
-            try {
-                accountService.createAnonymousAccount()
-            } catch (ex: FirebaseAuthException) {
-                throw ex
-            }
-            //TODO extract this at the beginning of the app
             accountService.linkAccount(email, password)
-            Log.d("SignUpViewModel", "onSignUpClick: coroutine")
+            openAndPopUp(MAIN_APP, SIGN_UP_SCREEN)
         }
     }
 }

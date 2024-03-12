@@ -1,5 +1,6 @@
 package com.snowaze.app.model.impl
 
+import android.os.Trace
 import androidx.core.os.trace
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -42,18 +43,28 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth) : A
         auth.signInAnonymously().await()
     }
 
-    override suspend fun linkAccount(email: String, password: String): Unit =
-        trace(LINK_ACCOUNT_TRACE) {
-            val credential = EmailAuthProvider.getCredential(email, password)
-            val currentUser = auth.currentUser
-            if (currentUser != null) {
-                currentUser.linkWithCredential(credential).await()
+    override suspend fun register(email: String, password: String) {
+        auth.createUserWithEmailAndPassword(email, password).await()
+    }
+
+    override suspend fun linkAccount(email: String, password: String): Unit {
+        Trace.beginSection(LINK_ACCOUNT_TRACE)
+        try {
+            if(auth.currentUser == null) {
+                register(email, password)
             } else {
-                // Handle the case where currentUser is null
-                // For example, throw a custom exception or return a specific result
-                throw IllegalStateException("Current user is null")
+                val currentUser = auth.currentUser
+                if (currentUser != null) {
+                    val credential = EmailAuthProvider.getCredential(email, password)
+                    currentUser.linkWithCredential(credential).await()
+                } else {
+                    throw IllegalStateException("Current user is null")
+                }
             }
+        } finally {
+            Trace.endSection()
         }
+    }
 
     override suspend fun deleteAccount() {
         auth.currentUser!!.delete().await()
