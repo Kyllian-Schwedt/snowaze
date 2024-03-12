@@ -90,9 +90,11 @@ fun HomeScreen(navController: NavHostController) {
                     when (HomeTabs.entries[pagerState.currentPage]) {
                         HomeTabs.Tracks -> {
                             TrackScreen(tracks = listOf(track), navController = navController)
+                            TODO("Use real data for tracks")
                         }
                         HomeTabs.SkiLifts -> {
                             SkiLiftScreen(skiLifts = listOf(skiLift), navController = navController)
+                            TODO("Use real data for ski lifts")
                         }
                     }
                 }
