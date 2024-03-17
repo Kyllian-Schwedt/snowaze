@@ -1,5 +1,6 @@
 package com.snowaze.app.compose.home
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.snowaze.app.compose.home.skiLift.SkiLiftScreen
 import com.snowaze.app.compose.home.track.TrackScreen
@@ -36,10 +38,18 @@ import java.util.UUID
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavHostController) {
+fun HomeScreen(
+    navController: NavHostController,
+    viewModel: HomeViewModel = hiltViewModel()
+) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { HomeTabs.entries.size })
     val selectedTabIndex = remember { derivedStateOf { pagerState.currentPage } }
+    viewModel.trackService.tracks
+    //TODO : Implement the track service from the model
+    Log.d("HomeScreen", "HomeScreen")
+    Log.d("HomeScreen", "Il y a ${viewModel.trackService.tracks.size} pistes")
+    //TODO
 
     Scaffold(
     ) {
