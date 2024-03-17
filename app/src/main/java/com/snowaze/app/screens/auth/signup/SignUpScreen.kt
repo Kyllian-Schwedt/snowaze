@@ -46,8 +46,6 @@ fun SignUpScreenContent(
 ) {
     val fieldModifier = Modifier.fillMaxWidth().padding(16.dp, 4.dp)
 
-    //TODO top bar
-
     Column(
         modifier = modifier
             .fillMaxWidth()

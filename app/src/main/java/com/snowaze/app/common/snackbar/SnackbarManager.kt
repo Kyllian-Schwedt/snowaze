@@ -1,5 +1,6 @@
 package com.snowaze.app.common.snackbar
 
+import android.util.Log
 import androidx.annotation.StringRes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,6 +12,7 @@ object SnackbarManager {
         get() = messages.asStateFlow()
 
     fun showMessage(@StringRes message: Int) {
+        Log.d("SnackbarManager", "showMessage$message")
         messages.value = SnackbarMessage.ResourceSnackbar(message)
     }
 
