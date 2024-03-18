@@ -36,14 +36,13 @@ import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun SnoWazeApp() {
-    val snackbarHostState = remember { SnackbarHostState() }
     AppTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             val appState = rememberAppState(snackbarHostState = SnackbarHostState())
             Scaffold(
                 snackbarHost = {
                     SnackbarHost(
-                        hostState = snackbarHostState,
+                        hostState = appState.snackbarHostState,
                         modifier = Modifier.padding(8.dp),
                         snackbar = { snackbarData ->
                             Snackbar(snackbarData, contentColor = MaterialTheme.colorScheme.onPrimary)

@@ -1,6 +1,7 @@
 package com.snowaze.app.services
 
 import android.util.Log
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.google.firebase.Firebase
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -18,12 +19,13 @@ import com.snowaze.app.model.Track
 import com.snowaze.app.model.TrackJSON
 import java.util.UUID
 
+@Deprecated("This class is deprecated and will be removed in a future release")
 class FirebaseService {
     companion object {
         private var init = false
         private val database = Firebase.database("https://snowaze-default-rtdb.europe-west1.firebasedatabase.app/")
-        val skiLifts : MutableList<SkiLift> = mutableListOf()
-        val tracks : MutableList<Track> = mutableListOf()
+        val skiLifts : SnapshotStateList<SkiLift> = SnapshotStateList()
+        val tracks : SnapshotStateList<Track> = SnapshotStateList()
 
         /**
          * Initialize the FirebaseService and start listening to the database. This method should be called once in the application lifecycle.
