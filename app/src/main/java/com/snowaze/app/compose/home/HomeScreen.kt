@@ -28,11 +28,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.snowaze.app.compose.home.skiLift.SkiLiftScreen
 import com.snowaze.app.compose.home.track.TrackScreen
-import com.snowaze.app.model.Difficulty
 import com.snowaze.app.model.SkiLift
 import com.snowaze.app.model.SkiLiftType
 import com.snowaze.app.model.Status
-import com.snowaze.app.model.Track
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -99,8 +97,7 @@ fun HomeScreen(
                 ) {
                     when (HomeTabs.entries[pagerState.currentPage]) {
                         HomeTabs.Tracks -> {
-                            TrackScreen(tracks = listOf(track), navController = navController)
-                            //TODO : Use real data for tracks
+                            TrackScreen(tracks = viewModel.trackService.tracks, navController = navController)
                         }
                         HomeTabs.SkiLifts -> {
                             SkiLiftScreen(skiLifts = listOf(skiLift), navController = navController)
@@ -112,15 +109,6 @@ fun HomeScreen(
         }
     }
 }
-
-val track = Track(
-    name = "Track 1",
-    difficulty = Difficulty.BLACK,
-    status = Status.OPEN,
-    hop = emptyList(),
-    comments = emptyList(),
-    id = UUID.randomUUID()
-)
 
 val skiLift = SkiLift(
     name = "Ski Lift 1",
