@@ -23,6 +23,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -102,10 +106,12 @@ fun TrackCard(track: Track, navController: NavHostController) {
 
            }
             Text(
-                text = track.status.toString(),
-                color = when (track.status) {
+                text = track.status.value.toString(),
+                color = when (track.status.value) {
                     Status.OPEN -> Color.Green
                     Status.CLOSED -> Color.Red
+                    else -> {
+                        Color.Black}
                 },
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold

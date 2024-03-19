@@ -1,5 +1,11 @@
 package com.snowaze.app.model
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.Snapshot
+import androidx.compose.runtime.snapshots.SnapshotMutableState
+import androidx.lifecycle.MutableLiveData
 import java.util.UUID
 
 interface IPath {
@@ -9,14 +15,14 @@ interface IPath {
     var comments: List<Comment>;
 }
 
-class Track(
+class Track (
     override var id: UUID,
     override var name: String,
     override var hop: List<IPath>,
     override var comments: List<Comment>,
     var section: Int,
     val difficulty: Difficulty,
-    var status: Status,
+    var status: MutableState<Status>
 ) : IPath {
     public fun toJSON(): TrackJSON {
         val hop : List<String>;

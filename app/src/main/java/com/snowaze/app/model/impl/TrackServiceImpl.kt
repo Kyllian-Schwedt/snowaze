@@ -1,7 +1,11 @@
 package com.snowaze.app.model.impl
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.Firebase
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -118,7 +122,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
         // Remove the path that are too difficult
         paths = paths.filter { it.all { it is Track && it.difficulty <= maxDifficulty || it is SkiLift } }.toMutableList()
         // Remove the path that are closed
-        paths = paths.filter { it.all { it is Track && it.status == Status.OPEN || it is SkiLift && it.status == Status.OPEN } }.toMutableList()
+        paths = paths.filter { it.all { it is Track && it.status.value == Status.OPEN || it is SkiLift && it.status == Status.OPEN } }.toMutableList()
         // Take the 5 shortest path
         paths.sortBy { it.size }
         if (paths.size > 5) {
@@ -187,7 +191,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                         comments = trackJSON.comments,
                         difficulty = Difficulty.valueOf(trackJSON.difficulty),
                         section = trackJSON.section,
-                        status = Status.valueOf(trackJSON.status),
+                        status = mutableStateOf(Status.valueOf(trackJSON.status)),
                         hop = mutableListOf()
                     )
                 )
@@ -199,7 +203,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
             if (trackJSON != null) {
                 val track = tracks.find { it.id == UUID.fromString(trackJSON.id) }
                 if (track != null) {
-                    track.status = Status.valueOf(trackJSON.status)
+                    track.status.value = Status.valueOf(trackJSON.status)
                     track.comments = trackJSON.comments
                 }
             }
