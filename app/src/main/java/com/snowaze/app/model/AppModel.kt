@@ -14,6 +14,7 @@ class Track(
     override var name: String,
     override var hop: List<IPath>,
     override var comments: List<Comment>,
+    var section: Int,
     val difficulty: Difficulty,
     var status: Status,
 ) : IPath {
@@ -27,6 +28,7 @@ class Track(
         return TrackJSON(
             id = this.id.toString(),
             name = this.name,
+            section = this.section,
             comments = this.comments,
             difficulty = this.difficulty.toString(),
             status = this.status.toString(),

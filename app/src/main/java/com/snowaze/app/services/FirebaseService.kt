@@ -24,8 +24,8 @@ class FirebaseService {
     companion object {
         private var init = false
         private val database = Firebase.database("https://snowaze-default-rtdb.europe-west1.firebasedatabase.app/")
-        val skiLifts : MutableList<SkiLift> = mutableListOf()
-        val tracks : MutableList<Track> = mutableListOf()
+        val skiLifts : SnapshotStateList<SkiLift> = SnapshotStateList()
+        val tracks : SnapshotStateList<Track> = SnapshotStateList()
 
         /**
          * Initialize the FirebaseService and start listening to the database. This method should be called once in the application lifecycle.
