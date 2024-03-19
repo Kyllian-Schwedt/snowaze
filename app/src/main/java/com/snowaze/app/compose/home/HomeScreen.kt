@@ -33,6 +33,7 @@ import com.snowaze.app.model.SkiLift
 import com.snowaze.app.model.SkiLiftType
 import com.snowaze.app.model.Status
 import com.snowaze.app.model.Track
+import com.snowaze.app.services.FirebaseService
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -40,7 +41,7 @@ import java.util.UUID
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel
 ) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { HomeTabs.entries.size })
@@ -48,7 +49,7 @@ fun HomeScreen(
     viewModel.trackService.tracks
     //TODO : Implement the track service from the model
     Log.d("HomeScreen", "HomeScreen")
-    Log.d("HomeScreen", "Il y a ${viewModel.trackService.tracks.size} pistes")
+    Log.d("HomeScreen", "Il y a ${viewModel.trackService.tracks.count()} pistes")
     //TODO
 
     Scaffold(

@@ -24,8 +24,8 @@ class FirebaseService {
     companion object {
         private var init = false
         private val database = Firebase.database("https://snowaze-default-rtdb.europe-west1.firebasedatabase.app/")
-        val skiLifts : SnapshotStateList<SkiLift> = SnapshotStateList()
-        val tracks : SnapshotStateList<Track> = SnapshotStateList()
+        val skiLifts : MutableList<SkiLift> = mutableListOf()
+        val tracks : MutableList<Track> = mutableListOf()
 
         /**
          * Initialize the FirebaseService and start listening to the database. This method should be called once in the application lifecycle.
@@ -34,25 +34,65 @@ class FirebaseService {
             if (init) return
             init = true
             val ref = database.reference;
-            // Get the data once
+
+            // Set up the event listeners before fetching the initial data
+            // Add listener on child for tracks
+            val trackEventListener = object : ChildEventListener {
+                override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                    val trackJSON = snapshot.getValue(TrackJSON::class.java)
+                    if (trackJSON != null) {
+                        tracks.add(
+                            Track(
+                                id = UUID.fromString(trackJSON.id),
+                                name = trackJSON.name,
+                                comments = trackJSON.comments,
+                                difficulty = Difficulty.valueOf(trackJSON.difficulty),
+                                status = Status.valueOf(trackJSON.status),
+                                hop = mutableListOf()
+                            )
+                        )
+                    }
+                }
+
+                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                    val trackJSON = snapshot.getValue(TrackJSON::class.java)
+                    if (trackJSON != null) {
+                        val track = tracks.find { it.id == UUID.fromString(trackJSON.id) }
+                        if (track != null) {
+                            track.status = Status.valueOf(trackJSON.status)
+                            track.comments = trackJSON.comments
+                        }
+                    }
+                    Log.d("FirebaseService", "Track ${snapshot.key} changed")
+                }
+
+                override fun onChildRemoved(snapshot: DataSnapshot) {
+                    val trackJSON = snapshot.getValue(TrackJSON::class.java)
+                    if (trackJSON != null) {
+                        tracks.removeIf { it.id == UUID.fromString(trackJSON.id) }
+                    }
+                }
+
+                override fun onChildMoved(
+                    snapshot: DataSnapshot,
+                    previousChildName: String?
+                ) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("FirebaseService", "Error onChildAdded", error.toException())
+                }
+            }
+            ref.child("tracks").addChildEventListener(trackEventListener)
+
+            // Now fetch the initial data
             try {
                 ref.get().addOnSuccessListener {
                     val value = it.getValue(JsonModel::class.java)
                     if (value != null) {
                         // Get the tracks
-                        for (track in value.tracks) {
-                            val trackJSON = track.value
-                            tracks.add(
-                                Track(
-                                    id = UUID.fromString(trackJSON.id),
-                                    name = trackJSON.name,
-                                    comments = trackJSON.comments,
-                                    difficulty = Difficulty.valueOf(trackJSON.difficulty),
-                                    status = Status.valueOf(trackJSON.status),
-                                    hop = mutableListOf()
-                                )
-                            )
-                        }
+
                         // Get the skiLifts
                         for (skiLift in value.skiLifts) {
                             val skiLiftJSON = skiLift.value
@@ -79,55 +119,6 @@ class FirebaseService {
                         Log.d("FirebaseService", "${tracks.size} tracks and ${skiLifts.size} skiLifts loaded")
                         Log.d("FirebaseService", "Tracks Hops 1: ${tracks[0].hop.size}")
                         Log.d("FirebaseService", "SkiLifts Hops 1: ${skiLifts[0].hop.size}")
-                        // Add listener on child for tracks
-                        val trackEventListener = object : ChildEventListener {
-                            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                                val trackJSON = snapshot.getValue(TrackJSON::class.java)
-                                if (trackJSON != null) {
-                                    tracks.add(
-                                        Track(
-                                            id = UUID.fromString(trackJSON.id),
-                                            name = trackJSON.name,
-                                            comments = trackJSON.comments,
-                                            difficulty = Difficulty.valueOf(trackJSON.difficulty),
-                                            status = Status.valueOf(trackJSON.status),
-                                            hop = mutableListOf()
-                                        )
-                                    )
-                                }
-                            }
-
-                            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                                val trackJSON = snapshot.getValue(TrackJSON::class.java)
-                                if (trackJSON != null) {
-                                    val track = tracks.find { it.id == UUID.fromString(trackJSON.id) }
-                                    if (track != null) {
-                                        track.status = Status.valueOf(trackJSON.status)
-                                        track.comments = trackJSON.comments
-                                    }
-                                }
-                                Log.d("FirebaseService", "Track ${snapshot.key} changed")
-                            }
-
-                            override fun onChildRemoved(snapshot: DataSnapshot) {
-                                val trackJSON = snapshot.getValue(TrackJSON::class.java)
-                                if (trackJSON != null) {
-                                    tracks.removeIf { it.id == UUID.fromString(trackJSON.id) }
-                                }
-                            }
-
-                            override fun onChildMoved(
-                                snapshot: DataSnapshot,
-                                previousChildName: String?
-                            ) {
-                                TODO("Not yet implemented")
-                            }
-
-                            override fun onCancelled(error: DatabaseError) {
-                                Log.e("FirebaseService", "Error onChildAdded", error.toException())
-                            }
-                        }
-                        ref.child("tracks").addChildEventListener(trackEventListener)
                         // Add listener on child for skiLifts
                         val childEventListener = object : ChildEventListener {
                             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {

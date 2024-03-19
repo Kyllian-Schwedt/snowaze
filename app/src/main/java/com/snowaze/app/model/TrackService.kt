@@ -3,7 +3,9 @@ package com.snowaze.app.model
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.google.firebase.Firebase
 import java.util.UUID
+import javax.inject.Singleton
 
+@Singleton
 interface TrackService {
     val skiLifts: SnapshotStateList<SkiLift>
     val tracks: SnapshotStateList<Track>

@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Settings
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.snowaze.app.compose.home.HomeScreen
 import com.snowaze.app.compose.itinerary.ItineraryScreen
@@ -18,7 +19,7 @@ val menuItems = listOf(
         unselectedIcon = Icons.Outlined.Home,
         navigationItem = NavigationItem(
             route = "home",
-            content = { navController: NavHostController -> HomeScreen(navController) }
+            content = { navController: NavHostController -> HomeScreen(navController, hiltViewModel()) }
         )
     ),
     NavigationDrawerItem(
