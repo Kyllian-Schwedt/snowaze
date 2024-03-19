@@ -186,6 +186,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                         name = trackJSON.name,
                         comments = trackJSON.comments,
                         difficulty = Difficulty.valueOf(trackJSON.difficulty),
+                        section = trackJSON.section,
                         status = Status.valueOf(trackJSON.status),
                         hop = mutableListOf()
                     )

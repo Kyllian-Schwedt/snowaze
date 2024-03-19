@@ -24,15 +24,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.snowaze.app.compose.home.skiLift.SkiLiftScreen
 import com.snowaze.app.compose.home.track.TrackScreen
 import com.snowaze.app.model.SkiLift
 import com.snowaze.app.model.SkiLiftType
 import com.snowaze.app.model.Status
-import com.snowaze.app.model.Track
-import com.snowaze.app.services.FirebaseService
 import kotlinx.coroutines.launch
 import java.util.UUID
 
