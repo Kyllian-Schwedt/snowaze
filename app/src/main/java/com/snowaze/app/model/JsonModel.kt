@@ -5,12 +5,13 @@ import java.util.UUID
 data class TrackJSON(
     val id: String,
     val name: String,
+    val section : Int,
     val comments: List<Comment>,
     val difficulty: String,
     val status: String,
     val hop: List<String>
 ) {
-    constructor() : this("", "", listOf(), "", "", listOf())
+    constructor() : this("", "", 0, listOf(), "", "", listOf())
 }
 
 data class SkiLiftJSON(

@@ -12,6 +12,7 @@ import java.util.UUID
 
 class InitDB {
     companion object {
+        /*
         fun init(context: Context): String {
             // Pistes
             val ramiers = Track(
@@ -503,5 +504,6 @@ class InitDB {
 
             return Gson().toJson(jsonModel);
         }
+        */
     }
 }

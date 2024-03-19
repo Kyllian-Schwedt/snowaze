@@ -97,7 +97,7 @@ fun HomeScreen(
                 ) {
                     when (HomeTabs.entries[pagerState.currentPage]) {
                         HomeTabs.Tracks -> {
-                            TrackScreen(tracks = viewModel.trackService.tracks, navController = navController)
+                            TrackScreen(tracks = viewModel.trackService.tracks.sortedBy { it.name }, navController = navController)
                         }
                         HomeTabs.SkiLifts -> {
                             SkiLiftScreen(skiLifts = listOf(skiLift), navController = navController)

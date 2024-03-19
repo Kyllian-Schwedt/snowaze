@@ -46,6 +46,7 @@ class FirebaseService {
                                 Track(
                                     id = UUID.fromString(trackJSON.id),
                                     name = trackJSON.name,
+                                    section = trackJSON.section,
                                     comments = trackJSON.comments,
                                     difficulty = Difficulty.valueOf(trackJSON.difficulty),
                                     status = Status.valueOf(trackJSON.status),
@@ -88,6 +89,7 @@ class FirebaseService {
                                         Track(
                                             id = UUID.fromString(trackJSON.id),
                                             name = trackJSON.name,
+                                            section = trackJSON.section,
                                             comments = trackJSON.comments,
                                             difficulty = Difficulty.valueOf(trackJSON.difficulty),
                                             status = Status.valueOf(trackJSON.status),
