@@ -5,5 +5,6 @@ import androidx.compose.runtime.setValue
 
 enum class Status {
     OPEN,
-    CLOSED,;
+    CLOSED,
+    UNKNOWN;
 }

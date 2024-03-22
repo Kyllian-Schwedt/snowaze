@@ -1,25 +1,23 @@
 package com.snowaze.app.model
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.snapshots.Snapshot
-import androidx.compose.runtime.snapshots.SnapshotMutableState
-import androidx.lifecycle.MutableLiveData
 import java.util.UUID
+import java.time.LocalDateTime
 
 interface IPath {
     var id: UUID;
     var name: String;
     var hop: List<IPath>;
-    var comments: List<Comment>;
+    var comments: HashMap<UUID, Comment>;
 }
 
 class Track (
     override var id: UUID,
     override var name: String,
     override var hop: List<IPath>,
-    override var comments: List<Comment>,
+    override var comments: HashMap<UUID, Comment>,
     var section: Int,
     val difficulty: Difficulty,
     var status: MutableState<Status>
@@ -35,7 +33,7 @@ class Track (
             id = this.id.toString(),
             name = this.name,
             section = this.section,
-            comments = this.comments,
+            comments = this.comments.map { it.key.toString() to it.value.toJson() }.toMap() as HashMap<String, CommentJSON>,
             difficulty = this.difficulty.toString(),
             status = this.status.toString(),
             hop = hop
@@ -47,7 +45,7 @@ class SkiLift(
     override var id: UUID,
     override var name: String,
     override var hop: List<IPath>,
-    override var comments: List<Comment>,
+    override var comments: HashMap<UUID, Comment>,
     var type: SkiLiftType,
     var status: Status,
 ) : IPath {
@@ -61,7 +59,7 @@ class SkiLift(
         return SkiLiftJSON(
             id = this.id.toString(),
             name = this.name,
-            comments = this.comments,
+            comments = this.comments.map { it.key.toString() to it.value.toJson() }.toMap() as HashMap<String, CommentJSON>,
             type = this.type.toString(),
             status = this.status.toString(),
             hop = hop
@@ -69,9 +67,23 @@ class SkiLift(
     }
 }
 
-data class Comment(
-    val id: String,
-    val text: String,
-    val author: String,
-    val date: String
-)
+class Comment(
+    var id: UUID,
+    var text: String,
+    var authorId: String,
+    var date: LocalDateTime
+) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    constructor() : this(UUID.randomUUID(), "", "", LocalDateTime.now())
+    public fun toJson(): CommentJSON {
+        return CommentJSON(
+            id = this.id.toString(),
+            text = this.text,
+            author = this.authorId,
+            date = this.date.toString()
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    constructor(json: CommentJSON) : this(UUID.fromString(json.id), json.text, json.author, LocalDateTime.parse(json.date))
+}

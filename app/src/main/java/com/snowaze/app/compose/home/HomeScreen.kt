@@ -118,6 +118,6 @@ val skiLift = SkiLift(
     type = SkiLiftType.CHAIRLIFT,
     status = Status.OPEN,
     hop = emptyList(),
-    comments = emptyList(),
+    comments = hashMapOf(),
     id = UUID.randomUUID()
 )
