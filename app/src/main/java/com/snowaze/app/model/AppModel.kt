@@ -75,12 +75,11 @@ class Comment(
     constructor(text: String, authorId: String) : this(UUID.randomUUID(), text, authorId, Date())
     public fun toJson(): CommentJSON {
         return CommentJSON(
-            id = this.id.toString(),
             text = this.text,
             author = this.authorId,
             date = this.date.toString()
         )
     }
 
-    constructor(json: CommentJSON) : this(UUID.fromString(json.id), json.text, json.author, Date(json.date))
+    constructor(id : String, json: CommentJSON) : this(UUID.fromString(id), json.text, json.author, Date(json.date))
 }
