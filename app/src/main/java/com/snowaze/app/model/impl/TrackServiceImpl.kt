@@ -70,11 +70,11 @@ class TrackServiceImpl @Inject constructor(): TrackService {
     }
 
     override fun addCommentToTrack(id: UUID, comment: Comment) {
-        this.database.getReference("tracks").child(id.toString()).child("comments").child(comment.id.toString()).setValue(comment)
+        this.database.getReference("tracks").child(id.toString()).child("comments").child(comment.id.toString()).setValue(comment.toJson())
     }
 
     override fun addCommentToSkiLift(id: UUID, comment: Comment) {
-        this.database.getReference("skiLifts").child(id.toString()).child("comments").child(comment.id.toString()).setValue(comment)
+        this.database.getReference("skiLifts").child(id.toString()).child("comments").child(comment.id.toString()).setValue(comment.toJson())
     }
 
     override fun getPath(from: UUID, to: UUID, maxDifficulty: Difficulty): List<List<IPath>> {
@@ -152,7 +152,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                             comments = if (skiLiftJSON.comments.isEmpty()) hashMapOf() else skiLiftJSON.comments.map {
                                 UUID.fromString(
                                     it.key
-                                ) to Comment(it.value)
+                                ) to Comment(it.key, it.value)
                             }.toMap() as HashMap<UUID, Comment>,
                             type = SkiLiftType.valueOf(skiLiftJSON.type),
                             status = try { Status.valueOf(skiLiftJSON.status) } catch (e: Exception) {
@@ -186,7 +186,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                             Log.e("FirebaseService", "Error parsing Status", e)
                         }
                         skiLift.comments = if (skiLiftJSON.comments.isEmpty()) hashMapOf() else skiLiftJSON.comments.map {
-                            UUID.fromString(it.key) to Comment(it.value)
+                            UUID.fromString(it.key) to Comment(it.key, it.value)
                         }.toMap() as HashMap<UUID, Comment>
                     }
                 }
@@ -232,7 +232,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                             comments = if (trackJSON.comments.isEmpty()) hashMapOf() else trackJSON.comments.map {
                                 UUID.fromString(
                                     it.key
-                                ) to Comment(it.value)
+                                ) to Comment(it.key, it.value)
                             }.toMap() as HashMap<UUID, Comment>,
                             difficulty = Difficulty.valueOf(trackJSON.difficulty),
                             section = trackJSON.section,
@@ -268,7 +268,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                         }
                         track.comments =
                             if (trackJSON.comments.isEmpty()) hashMapOf() else trackJSON.comments.map {
-                                UUID.fromString(it.key) to Comment(it.value)
+                                UUID.fromString(it.key) to Comment(it.key, it.value)
                             }.toMap() as HashMap<UUID, Comment>
                     }
                 }

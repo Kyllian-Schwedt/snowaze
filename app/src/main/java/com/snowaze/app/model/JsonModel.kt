@@ -26,12 +26,11 @@ data class SkiLiftJSON(
 }
 
 data class CommentJSON(
-    val id: String,
     val author: String,
     val text: String,
     val date: String
 ) {
-    constructor() : this("","", "", "")
+    constructor() : this("", "", "")
 }
 
 data class JsonModel(
