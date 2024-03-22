@@ -11,6 +11,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.database
 import com.snowaze.app.model.Comment
+import com.snowaze.app.model.CommentJSON
 import com.snowaze.app.model.Difficulty
 import com.snowaze.app.model.IPath
 import com.snowaze.app.model.JsonModel
@@ -131,7 +132,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
         return paths
     }
 
-    class SkiLiftListener(private val skiLifts: SnapshotStateList<SkiLift>) : ChildEventListener {
+    class SkiLiftListener(private val skiLifts: SnapshotStateList<SkiLift>) : ChildEventListener, CommentsHashMapToList() {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             Log.d("FirebaseService", "SkiLift ${snapshot.key} added")
@@ -145,11 +146,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                         SkiLift(
                             id = UUID.fromString(skiLiftJSON.id),
                             name = skiLiftJSON.name,
-                            comments = if (skiLiftJSON.comments.isEmpty()) hashMapOf() else skiLiftJSON.comments.map {
-                                UUID.fromString(
-                                    it.key
-                                ) to Comment(it.key, it.value)
-                            }.toMap() as HashMap<UUID, Comment>,
+                            comments = commentsHashMapToList(skiLiftJSON.comments),
                             type = SkiLiftType.valueOf(skiLiftJSON.type),
                             status = try { Status.valueOf(skiLiftJSON.status) } catch (e: Exception) {
                                 Log.e("FirebaseService", "Error parsing Status", e)
@@ -181,9 +178,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                             skiLift.status = Status.UNKNOWN
                             Log.e("FirebaseService", "Error parsing Status", e)
                         }
-                        skiLift.comments = if (skiLiftJSON.comments.isEmpty()) hashMapOf() else skiLiftJSON.comments.map {
-                            UUID.fromString(it.key) to Comment(it.key, it.value)
-                        }.toMap() as HashMap<UUID, Comment>
+                        skiLift.comments = commentsHashMapToList(skiLiftJSON.comments)
                     }
                 }
                 Log.d("FirebaseService", "SkiLift ${snapshot.key} changed")
@@ -212,7 +207,8 @@ class TrackServiceImpl @Inject constructor(): TrackService {
         }
     }
 
-    class TrackListener(private val tracks: SnapshotStateList<Track>) : ChildEventListener {
+    class TrackListener(private val tracks: SnapshotStateList<Track>) : ChildEventListener,
+        CommentsHashMapToList() {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             if (snapshot.value == null) {
@@ -225,11 +221,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                         Track(
                             id = UUID.fromString(trackJSON.id),
                             name = trackJSON.name,
-                            comments = if (trackJSON.comments.isEmpty()) hashMapOf() else trackJSON.comments.map {
-                                UUID.fromString(
-                                    it.key
-                                ) to Comment(it.key, it.value)
-                            }.toMap() as HashMap<UUID, Comment>,
+                            comments = commentsHashMapToList(trackJSON.comments),
                             difficulty = Difficulty.valueOf(trackJSON.difficulty),
                             section = trackJSON.section,
                             status = try { mutableStateOf(Status.valueOf(trackJSON.status)) } catch (e: Exception) {
@@ -262,10 +254,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                             track.status.value = Status.UNKNOWN
                             Log.e("FirebaseService", "Error parsing Status", e)
                         }
-                        track.comments =
-                            if (trackJSON.comments.isEmpty()) hashMapOf() else trackJSON.comments.map {
-                                UUID.fromString(it.key) to Comment(it.key, it.value)
-                            }.toMap() as HashMap<UUID, Comment>
+                        track.comments = commentsHashMapToList(trackJSON.comments)
                     }
                 }
                 Log.d("FirebaseService", "Track ${snapshot.key} changed")
@@ -293,5 +282,14 @@ class TrackServiceImpl @Inject constructor(): TrackService {
             Log.e("FirebaseService", "Error onChildAdded", error.toException())
         }
     }
+}
 
+abstract class CommentsHashMapToList {
+    public fun commentsHashMapToList(comments: HashMap<String, CommentJSON>): List<Comment> {
+        val list = mutableListOf<Comment>()
+        for (comment in comments) {
+            list.add(Comment(comment.key, comment.value))
+        }
+        return list
+    }
 }
