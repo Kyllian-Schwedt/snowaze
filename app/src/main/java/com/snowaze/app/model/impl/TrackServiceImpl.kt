@@ -1,11 +1,8 @@
 package com.snowaze.app.model.impl
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.lifecycle.MutableLiveData
 import com.google.firebase.Firebase
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -60,6 +57,10 @@ class TrackServiceImpl @Inject constructor(): TrackService {
 
     override fun updateTrackStatus(id: UUID, status: Status) {
         this.database.getReference("tracks").child(id.toString()).child("status").setValue(status.toString())
+    }
+
+    override fun getTrack(id: UUID): Track? {
+        return this.tracks.find { it.id == id }
     }
 
     override fun updateSkiLiftStatus(id: UUID, status: Status) {

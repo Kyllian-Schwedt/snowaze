@@ -41,9 +41,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.snowaze.app.R
+import com.snowaze.app.compose.home.track.TrackDetailScreen
 import com.snowaze.app.data.navigation.NavigationDrawerItem
 import com.snowaze.app.ui.theme.AppTheme
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 @SuppressLint("ResourceAsColor")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -180,6 +182,12 @@ fun ScreenContent(
                 composable(item.navigationItem.route) {
                     item.navigationItem.content(navController)
                 }
+            }
+            composable("track/{id}") { backStackEntry ->
+                val id = backStackEntry.arguments?.getString("id")
+                val uuid = UUID.fromString(id ?: "")
+                TrackDetailScreen(id = uuid, navController = navController)
+
             }
         }
 

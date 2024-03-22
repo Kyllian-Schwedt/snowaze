@@ -1,7 +1,6 @@
 package com.snowaze.app.model
 
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import com.google.firebase.Firebase
 import java.util.UUID
 import javax.inject.Singleton
 
@@ -18,6 +17,12 @@ interface TrackService {
     fun updateTrackStatus(id : UUID, status: Status)
 
     /**
+     * Get a track by its id
+     * @param id The id of the track
+     */
+    fun getTrack(id: UUID): Track?
+
+    /**
      * Update the status of a ski lift
      * @param id The id of the ski lift
      * @param status The new status of the ski lift (OPENED, CLOSED)
@@ -29,7 +34,7 @@ interface TrackService {
      * @param id The id of the track
      * @param comment The comment to add
      */
-    fun addCommentToTrack(id : UUID, comment: Comment)
+    fun addCommentToTrack(id :UUID, comment: Comment)
 
     /**
      * Add a comment to a ski lift
