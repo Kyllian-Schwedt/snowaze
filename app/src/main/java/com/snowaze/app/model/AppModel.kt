@@ -23,11 +23,10 @@ class Track (
     var status: MutableState<Status>
 ) : IPath {
     public fun toJSON(): TrackJSON {
-        val hop : List<String>;
-        if (this.hop.isEmpty()) {
-            hop = listOf()
+        val hop : List<String> = if (this.hop.isEmpty()) {
+            listOf()
         } else {
-            hop = this.hop.map { it.id.toString() }
+            this.hop.map { it.id.toString() }
         }
         return TrackJSON(
             id = this.id.toString(),
@@ -50,11 +49,10 @@ class SkiLift(
     var status: Status,
 ) : IPath {
     public fun toJSON(): SkiLiftJSON {
-        val hop : List<String>;
-        if (this.hop.isEmpty()) {
-            hop = listOf()
+        val hop : List<String> = if (this.hop.isEmpty()) {
+            listOf()
         } else {
-            hop = this.hop.map { it.id.toString() }
+            this.hop.map { it.id.toString() }
         }
         return SkiLiftJSON(
             id = this.id.toString(),
