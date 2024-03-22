@@ -1,8 +1,13 @@
 package com.snowaze.app.model.impl
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.Firebase
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -57,10 +62,6 @@ class TrackServiceImpl @Inject constructor(): TrackService {
 
     override fun updateTrackStatus(id: UUID, status: Status) {
         this.database.getReference("tracks").child(id.toString()).child("status").setValue(status.toString())
-    }
-
-    override fun getTrack(id: UUID): Track? {
-        return this.tracks.find { it.id == id }
     }
 
     override fun updateSkiLiftStatus(id: UUID, status: Status) {
@@ -134,38 +135,71 @@ class TrackServiceImpl @Inject constructor(): TrackService {
     }
 
     class SkiLiftListener(private val skiLifts: SnapshotStateList<SkiLift>) : ChildEventListener {
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-            val skiLiftJSON = snapshot.getValue(SkiLiftJSON::class.java)
-            if (skiLiftJSON != null) {
-                skiLifts.add(
-                    SkiLift(
-                        id = UUID.fromString(skiLiftJSON.id),
-                        name = skiLiftJSON.name,
-                        comments = skiLiftJSON.comments,
-                        type = SkiLiftType.valueOf(skiLiftJSON.type),
-                        status = Status.valueOf(skiLiftJSON.status),
-                        hop = mutableListOf()
+            Log.d("FirebaseService", "SkiLift ${snapshot.key} added")
+            if (snapshot.value == null) {
+                return
+            }
+            try {
+                val skiLiftJSON = snapshot.getValue(SkiLiftJSON::class.java)
+                if (skiLiftJSON != null) {
+                    skiLifts.add(
+                        SkiLift(
+                            id = UUID.fromString(skiLiftJSON.id),
+                            name = skiLiftJSON.name,
+                            comments = if (skiLiftJSON.comments.isEmpty()) hashMapOf() else skiLiftJSON.comments.map {
+                                UUID.fromString(
+                                    it.key
+                                ) to Comment(it.value)
+                            }.toMap() as HashMap<UUID, Comment>,
+                            type = SkiLiftType.valueOf(skiLiftJSON.type),
+                            status = try { Status.valueOf(skiLiftJSON.status) } catch (e: Exception) {
+                                Log.e("FirebaseService", "Error parsing Status", e)
+                                Status.UNKNOWN
+                            },
+                            hop = mutableListOf()
+                        )
                     )
-                )
+                }
+            }
+            catch (e: Exception) {
+                Log.e("FirebaseService", "Error onChildAdded", e)
             }
         }
 
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-            val skiLiftJSON = snapshot.getValue(SkiLiftJSON::class.java)
-            if (skiLiftJSON != null) {
-                val skiLift = skiLifts.find { it.id == UUID.fromString(skiLiftJSON.id) }
-                if (skiLift != null) {
-                    skiLift.status = Status.valueOf(skiLiftJSON.status)
-                    skiLift.comments = skiLiftJSON.comments
-                }
+            if (snapshot.value == null) {
+                return
             }
-            Log.d("FirebaseService", "SkiLift ${snapshot.key} changed")
+            try {
+                val skiLiftJSON = snapshot.getValue(SkiLiftJSON::class.java)
+                if (skiLiftJSON != null) {
+                    val skiLift = skiLifts.find { it.id == UUID.fromString(skiLiftJSON.id) }
+                    if (skiLift != null) {
+                        try {
+                            skiLift.status = Status.valueOf(skiLiftJSON.status)
+                        } catch (e: Exception) {
+                            skiLift.status = Status.UNKNOWN
+                            Log.e("FirebaseService", "Error parsing Status", e)
+                        }
+                        skiLift.comments = if (skiLiftJSON.comments.isEmpty()) hashMapOf() else skiLiftJSON.comments.map {
+                            UUID.fromString(it.key) to Comment(it.value)
+                        }.toMap() as HashMap<UUID, Comment>
+                    }
+                }
+                Log.d("FirebaseService", "SkiLift ${snapshot.key} changed")
+            }
+            catch (e: Exception) {
+                Log.e("FirebaseService", "Error onChildChanged", e)
+            }
         }
 
         override fun onChildRemoved(snapshot: DataSnapshot) {
             val skiLiftJSON = snapshot.getValue(SkiLiftJSON::class.java)
             if (skiLiftJSON != null) {
-                skiLifts.removeIf { it.id == UUID.fromString(skiLiftJSON.id) }
+                TODO("Not yet implemented")
             }
         }
 
@@ -182,39 +216,72 @@ class TrackServiceImpl @Inject constructor(): TrackService {
     }
 
     class TrackListener(private val tracks: SnapshotStateList<Track>) : ChildEventListener {
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-            val trackJSON = snapshot.getValue(TrackJSON::class.java)
-            if (trackJSON != null) {
-                tracks.add(
-                    Track(
-                        id = UUID.fromString(trackJSON.id),
-                        name = trackJSON.name,
-                        comments = trackJSON.comments,
-                        difficulty = Difficulty.valueOf(trackJSON.difficulty),
-                        section = trackJSON.section,
-                        status = mutableStateOf(Status.valueOf(trackJSON.status)),
-                        hop = mutableListOf()
+            if (snapshot.value == null) {
+                return
+            }
+            try {
+                val trackJSON = snapshot.getValue(TrackJSON::class.java)
+                if (trackJSON != null) {
+                    tracks.add(
+                        Track(
+                            id = UUID.fromString(trackJSON.id),
+                            name = trackJSON.name,
+                            comments = if (trackJSON.comments.isEmpty()) hashMapOf() else trackJSON.comments.map {
+                                UUID.fromString(
+                                    it.key
+                                ) to Comment(it.value)
+                            }.toMap() as HashMap<UUID, Comment>,
+                            difficulty = Difficulty.valueOf(trackJSON.difficulty),
+                            section = trackJSON.section,
+                            status = try { mutableStateOf(Status.valueOf(trackJSON.status)) } catch (e: Exception) {
+                                Log.e("FirebaseService", "Error parsing Status", e)
+                                mutableStateOf(Status.UNKNOWN)
+                            },
+                            hop = mutableListOf()
+                        )
                     )
-                )
+                }
+            }
+            catch (e: Exception) {
+                Log.e("FirebaseService", "Error onChildAdded", e)
             }
         }
 
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-            val trackJSON = snapshot.getValue(TrackJSON::class.java)
-            if (trackJSON != null) {
-                val track = tracks.find { it.id == UUID.fromString(trackJSON.id) }
-                if (track != null) {
-                    track.status.value = Status.valueOf(trackJSON.status)
-                    track.comments = trackJSON.comments
-                }
+            if (snapshot.value == null) {
+                return
             }
-            Log.d("FirebaseService", "Track ${snapshot.key} changed")
+            try {
+                val trackJSON = snapshot.getValue(TrackJSON::class.java)
+                if (trackJSON != null) {
+                    val track = tracks.find { it.id == UUID.fromString(trackJSON.id) }
+                    if (track != null) {
+                        try {
+                            track.status.value = Status.valueOf(trackJSON.status)
+                        } catch (e: Exception) {
+                            track.status.value = Status.UNKNOWN
+                            Log.e("FirebaseService", "Error parsing Status", e)
+                        }
+                        track.comments =
+                            if (trackJSON.comments.isEmpty()) hashMapOf() else trackJSON.comments.map {
+                                UUID.fromString(it.key) to Comment(it.value)
+                            }.toMap() as HashMap<UUID, Comment>
+                    }
+                }
+                Log.d("FirebaseService", "Track ${snapshot.key} changed")
+            }
+            catch (e: Exception) {
+                Log.e("FirebaseService", "Error onChildChanged", e)
+            }
         }
 
         override fun onChildRemoved(snapshot: DataSnapshot) {
             val trackJSON = snapshot.getValue(TrackJSON::class.java)
             if (trackJSON != null) {
-                tracks.removeIf { it.id == UUID.fromString(trackJSON.id) }
+                TODO("Not yet implemented")
             }
         }
 

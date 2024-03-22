@@ -103,6 +103,7 @@ fun SkiLiftCard(skiLift: SkiLift, navController: NavHostController) {
                 color = when (skiLift.status) {
                     Status.OPEN -> Color.Green
                     Status.CLOSED -> Color.Red
+                    Status.UNKNOWN -> Color.Black
                 },
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
