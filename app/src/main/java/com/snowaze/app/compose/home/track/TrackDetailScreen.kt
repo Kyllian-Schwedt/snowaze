@@ -1,5 +1,7 @@
 package com.snowaze.app.compose.home.track
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -44,10 +46,9 @@ import com.snowaze.app.model.Status
 import com.snowaze.app.model.TrackService
 import com.snowaze.app.ui.theme.md_theme_light_outline
 import com.snowaze.app.ui.theme.md_theme_light_primary
-import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.UUID
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrackDetailScreen(
@@ -59,7 +60,7 @@ fun TrackDetailScreen(
     val accountService: AccountService = viewModel.accountService
     val accountId = accountService.currentUserId
 
-    val comments = track?.comments ?: emptyList()
+    val comments = track?.comments ?: emptyMap()
     var newCommentText by rememberSaveable { mutableStateOf("") }
 
 
@@ -163,7 +164,7 @@ fun TrackDetailScreen(
                         }
                         comments.forEach { comment ->
                             item {
-                                CommentRow(comment)
+                                CommentRow(comment.value)
                             }
                         }
                     }
@@ -184,9 +185,7 @@ fun TrackDetailScreen(
                             )
                             IconButton(
                                 onClick = {
-                                    val newCommentUUID = UUID.randomUUID()
-                                    val dateFormatter = SimpleDateFormat("dd/MM/yyyy")
-                                    trackService.addCommentToTrack(id, Comment(newCommentUUID.toString(), newCommentText, accountId, dateFormatter.format(Date())))
+                                    trackService.addCommentToTrack(id, Comment(newCommentText, accountId,))
                                 },
                                 colors = IconButtonDefaults.iconButtonColors(
                                     contentColor = md_theme_light_primary,
