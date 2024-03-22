@@ -3,11 +3,8 @@ package com.snowaze.app.model.impl
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.lifecycle.MutableLiveData
 import com.google.firebase.Firebase
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -69,11 +66,11 @@ class TrackServiceImpl @Inject constructor(): TrackService {
     }
 
     override fun addCommentToTrack(id: UUID, comment: Comment) {
-        this.database.getReference("tracks").child(id.toString()).child("comments").push().setValue(comment)
+        this.database.getReference("tracks").child(id.toString()).child("comments").child(comment.id.toString()).setValue(comment)
     }
 
     override fun addCommentToSkiLift(id: UUID, comment: Comment) {
-        this.database.getReference("skiLifts").child(id.toString()).child("comments").push().setValue(comment)
+        this.database.getReference("skiLifts").child(id.toString()).child("comments").child(comment.id.toString()).setValue(comment)
     }
 
     override fun getPath(from: UUID, to: UUID, maxDifficulty: Difficulty): List<List<IPath>> {
