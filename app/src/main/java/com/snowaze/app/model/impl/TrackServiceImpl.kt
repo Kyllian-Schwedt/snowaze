@@ -70,11 +70,11 @@ class TrackServiceImpl @Inject constructor(): TrackService {
     }
 
     override fun addCommentToTrack(id: UUID, comment: Comment) {
-        this.database.getReference("tracks").child(id.toString()).child("comments").push().setValue(comment)
+        this.database.getReference("tracks").child(id.toString()).child("comments").child(comment.id.toString()).setValue(comment)
     }
 
     override fun addCommentToSkiLift(id: UUID, comment: Comment) {
-        this.database.getReference("skiLifts").child(id.toString()).child("comments").push().setValue(comment)
+        this.database.getReference("skiLifts").child(id.toString()).child("comments").child(comment.id.toString()).setValue(comment)
     }
 
     override fun getPath(from: UUID, to: UUID, maxDifficulty: Difficulty): List<List<IPath>> {

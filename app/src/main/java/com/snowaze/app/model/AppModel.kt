@@ -4,7 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.MutableState
 import java.util.UUID
-import java.time.LocalDateTime
+import java.util.Date
 
 interface IPath {
     var id: UUID;
@@ -69,12 +69,10 @@ class Comment(
     var id: UUID,
     var text: String,
     var authorId: String,
-    var date: LocalDateTime
+    var date: Date
 ) {
-    @RequiresApi(Build.VERSION_CODES.O)
-    constructor() : this(UUID.randomUUID(), "", "", LocalDateTime.now())
-    @RequiresApi(Build.VERSION_CODES.O)
-    constructor(text: String, authorId: String) : this(UUID.randomUUID(), text, authorId, LocalDateTime.now())
+    constructor() : this(UUID.randomUUID(), "", "", Date())
+    constructor(text: String, authorId: String) : this(UUID.randomUUID(), text, authorId, Date())
     public fun toJson(): CommentJSON {
         return CommentJSON(
             id = this.id.toString(),
@@ -84,6 +82,5 @@ class Comment(
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    constructor(json: CommentJSON) : this(UUID.fromString(json.id), json.text, json.author, LocalDateTime.parse(json.date))
+    constructor(json: CommentJSON) : this(UUID.fromString(json.id), json.text, json.author, Date(json.date))
 }
