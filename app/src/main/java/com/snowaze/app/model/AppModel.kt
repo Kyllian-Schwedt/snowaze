@@ -73,6 +73,8 @@ class Comment(
 ) {
     @RequiresApi(Build.VERSION_CODES.O)
     constructor() : this(UUID.randomUUID(), "", "", LocalDateTime.now())
+    @RequiresApi(Build.VERSION_CODES.O)
+    constructor(text: String, authorId: String) : this(UUID.randomUUID(), text, authorId, LocalDateTime.now())
     public fun toJson(): CommentJSON {
         return CommentJSON(
             id = this.id.toString(),
