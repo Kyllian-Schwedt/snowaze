@@ -1,6 +1,7 @@
 package com.snowaze.app.compose.home.track
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Send
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -49,7 +50,6 @@ import com.snowaze.app.ui.theme.md_theme_light_primary
 import java.util.UUID
 
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrackDetailScreen(
     id: UUID, navController: NavHostController, viewModel: TrackDetailViewModel = hiltViewModel()
@@ -59,9 +59,9 @@ fun TrackDetailScreen(
 
     val accountService: AccountService = viewModel.accountService
     val accountId = accountService.currentUserId
-
-    val comments = track?.comments ?: emptyMap()
     var newCommentText by rememberSaveable { mutableStateOf("") }
+    val comments = track?.comments ?: emptyList()
+    Log.d("comment list", comments.toString()+"stop")
 
 
     if (track != null) {
@@ -152,6 +152,7 @@ fun TrackDetailScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp)
+                            .heightIn(min = 100.dp, max = 110.dp)
                     ) {
                         if (comments.isEmpty()) {
                             item {
@@ -164,7 +165,7 @@ fun TrackDetailScreen(
                         }
                         comments.forEach { comment ->
                             item {
-                                CommentRow(comment.value)
+                                CommentRow(comment)
                             }
                         }
                     }
@@ -185,17 +186,14 @@ fun TrackDetailScreen(
                             )
                             IconButton(
                                 onClick = {
-                                    trackService.addCommentToTrack(id, Comment(newCommentText, accountId,))
+                                    trackService.addCommentToTrack(id, newCommentText, accountId)
+                                    newCommentText = ""
                                 },
                                 colors = IconButtonDefaults.iconButtonColors(
                                     contentColor = md_theme_light_primary,
                                     disabledContentColor = md_theme_light_outline
                                 ),
-                                enabled = if (newCommentText.isNotEmpty()) {
-                                    true
-                                } else {
-                                    false
-                                },
+                                enabled = newCommentText.isNotEmpty(),
                             ) {
                                 Icon(Icons.Outlined.Send, contentDescription = "Send")
                             }
