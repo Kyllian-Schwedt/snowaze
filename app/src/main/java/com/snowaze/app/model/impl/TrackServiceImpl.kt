@@ -66,17 +66,21 @@ class TrackServiceImpl @Inject constructor(): TrackService {
         this.database.getReference("tracks").child(id.toString()).child("status").setValue(status.toString())
     }
 
+    override fun getTrack(id: UUID): Track? {
+        return this.tracks.find { it.id == id }
+    }
+
     override fun updateSkiLiftStatus(id: UUID, status: Status) {
         this.database.getReference("skiLifts").child(id.toString()).child("status").setValue(status.toString())
     }
 
     override fun addCommentToTrack(id: UUID, text:String, author: String) {
-        val comment = Comment(author, text)
+        val comment = Comment(text, author)
         this.database.getReference("tracks").child(id.toString()).child("comments").push().setValue(comment.toJson())
     }
 
     override fun addCommentToSkiLift(id: UUID, text:String, author: String) {
-        val comment = Comment(author, text)
+        val comment = Comment(text, author)
         this.database.getReference("skiLifts").child(id.toString()).child("comments").push().setValue(comment.toJson())
     }
 
@@ -342,6 +346,7 @@ abstract class CommentsHashMapToList {
     public fun commentsHashMapToList(comments: HashMap<String, CommentJSON>): List<Comment> {
         val list = mutableListOf<Comment>()
         for (comment in comments) {
+            list.add(Comment(comment.key, comment.value))
             list.add(Comment(comment.key, comment.value))
         }
         return list

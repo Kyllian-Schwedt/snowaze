@@ -1,19 +1,17 @@
 package com.snowaze.app.model.impl
 
 import android.os.Trace
-import androidx.core.os.trace
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.snowaze.app.model.AccountService
 import com.snowaze.app.model.User
-import javax.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
 class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth) : AccountService {
-
 
     override val currentUserId: String
         get() = auth.currentUser?.uid.orEmpty()
