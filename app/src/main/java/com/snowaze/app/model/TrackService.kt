@@ -37,7 +37,7 @@ interface TrackService {
      * @param id The id of the ski lift
      * @param comment The comment to add
      */
-    fun addCommentToSkiLift(id : UUID, comment: Comment)
+    fun addCommentToSkiLift(id : UUID, text: String, author: String)
 
     /**
      * Add a chat message

@@ -75,8 +75,9 @@ class TrackServiceImpl @Inject constructor(): TrackService {
         this.database.getReference("tracks").child(id.toString()).child("comments").push().setValue(comment.toJson())
     }
 
-    override fun addCommentToSkiLift(id: UUID, comment: Comment) {
-        this.database.getReference("skiLifts").child(id.toString()).child("comments").child(comment.id.toString()).setValue(comment.toJson())
+    override fun addCommentToSkiLift(id: UUID, text:String, author: String) {
+        val comment = Comment(author, text)
+        this.database.getReference("skiLifts").child(id.toString()).child("comments").push().setValue(comment.toJson())
     }
 
     override fun addChatMessage(text: String, author: String) {
