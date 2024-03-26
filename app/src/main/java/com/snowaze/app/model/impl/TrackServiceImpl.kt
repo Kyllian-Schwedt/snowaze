@@ -10,7 +10,10 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.database
+import com.snowaze.app.model.ChatMessage
+import com.snowaze.app.model.ChatMessageJSON
 import com.snowaze.app.model.Comment
+import com.snowaze.app.model.CommentJSON
 import com.snowaze.app.model.Difficulty
 import com.snowaze.app.model.IPath
 import com.snowaze.app.model.JsonModel
@@ -32,6 +35,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
 
     override val skiLifts: SnapshotStateList<SkiLift> = SnapshotStateList()
     override val tracks: SnapshotStateList<Track> = SnapshotStateList()
+    override val chatMessages: SnapshotStateList<ChatMessage> = SnapshotStateList()
 
     init {
         val ref = this.database.reference
@@ -50,6 +54,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                     ref.child("tracks").addChildEventListener(TrackListener(this.tracks))
 
                     ref.child("skiLifts").addChildEventListener(SkiLiftListener(this.skiLifts))
+                    ref.child("chatMessages").addChildEventListener(ChatMessagesListener(this.chatMessages))
                 }
             }
         } catch (e: Exception) {
@@ -69,12 +74,19 @@ class TrackServiceImpl @Inject constructor(): TrackService {
         this.database.getReference("skiLifts").child(id.toString()).child("status").setValue(status.toString())
     }
 
-    override fun addCommentToTrack(id: UUID, comment: Comment) {
-        this.database.getReference("tracks").child(id.toString()).child("comments").child(comment.id.toString()).setValue(comment.toJson())
+    override fun addCommentToTrack(id: UUID, text:String, author: String) {
+        val comment = Comment(author, text)
+        this.database.getReference("tracks").child(id.toString()).child("comments").push().setValue(comment.toJson())
     }
 
-    override fun addCommentToSkiLift(id: UUID, comment: Comment) {
-        this.database.getReference("skiLifts").child(id.toString()).child("comments").child(comment.id.toString()).setValue(comment.toJson())
+    override fun addCommentToSkiLift(id: UUID, text:String, author: String) {
+        val comment = Comment(author, text)
+        this.database.getReference("skiLifts").child(id.toString()).child("comments").push().setValue(comment.toJson())
+    }
+
+    override fun addChatMessage(text: String, author: String) {
+        val message = ChatMessage(text, author)
+        this.database.getReference("chatMessages").push().setValue(message.toJson())
     }
 
     override fun getPath(from: UUID, to: UUID, maxDifficulty: Difficulty): List<List<IPath>> {
@@ -135,7 +147,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
         return paths
     }
 
-    class SkiLiftListener(private val skiLifts: SnapshotStateList<SkiLift>) : ChildEventListener {
+    class SkiLiftListener(private val skiLifts: SnapshotStateList<SkiLift>) : ChildEventListener, CommentsHashMapToList() {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             Log.d("FirebaseService", "SkiLift ${snapshot.key} added")
@@ -149,11 +161,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                         SkiLift(
                             id = UUID.fromString(skiLiftJSON.id),
                             name = skiLiftJSON.name,
-                            comments = if (skiLiftJSON.comments.isEmpty()) hashMapOf() else skiLiftJSON.comments.map {
-                                UUID.fromString(
-                                    it.key
-                                ) to Comment(it.key, it.value)
-                            }.toMap() as HashMap<UUID, Comment>,
+                            comments = commentsHashMapToList(skiLiftJSON.comments),
                             type = SkiLiftType.valueOf(skiLiftJSON.type),
                             status = try { Status.valueOf(skiLiftJSON.status) } catch (e: Exception) {
                                 Log.e("FirebaseService", "Error parsing Status", e)
@@ -185,9 +193,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                             skiLift.status = Status.UNKNOWN
                             Log.e("FirebaseService", "Error parsing Status", e)
                         }
-                        skiLift.comments = if (skiLiftJSON.comments.isEmpty()) hashMapOf() else skiLiftJSON.comments.map {
-                            UUID.fromString(it.key) to Comment(it.key, it.value)
-                        }.toMap() as HashMap<UUID, Comment>
+                        skiLift.comments = commentsHashMapToList(skiLiftJSON.comments)
                     }
                 }
                 Log.d("FirebaseService", "SkiLift ${snapshot.key} changed")
@@ -200,7 +206,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
         override fun onChildRemoved(snapshot: DataSnapshot) {
             val skiLiftJSON = snapshot.getValue(SkiLiftJSON::class.java)
             if (skiLiftJSON != null) {
-                TODO("Not yet implemented")
+                skiLifts.removeIf { it.id == UUID.fromString(skiLiftJSON.id) }
             }
         }
 
@@ -216,7 +222,8 @@ class TrackServiceImpl @Inject constructor(): TrackService {
         }
     }
 
-    class TrackListener(private val tracks: SnapshotStateList<Track>) : ChildEventListener {
+    class TrackListener(private val tracks: SnapshotStateList<Track>) : ChildEventListener,
+        CommentsHashMapToList() {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             if (snapshot.value == null) {
@@ -229,11 +236,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                         Track(
                             id = UUID.fromString(trackJSON.id),
                             name = trackJSON.name,
-                            comments = if (trackJSON.comments.isEmpty()) hashMapOf() else trackJSON.comments.map {
-                                UUID.fromString(
-                                    it.key
-                                ) to Comment(it.key, it.value)
-                            }.toMap() as HashMap<UUID, Comment>,
+                            comments = commentsHashMapToList(trackJSON.comments),
                             difficulty = Difficulty.valueOf(trackJSON.difficulty),
                             section = trackJSON.section,
                             status = try { mutableStateOf(Status.valueOf(trackJSON.status)) } catch (e: Exception) {
@@ -266,10 +269,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                             track.status.value = Status.UNKNOWN
                             Log.e("FirebaseService", "Error parsing Status", e)
                         }
-                        track.comments =
-                            if (trackJSON.comments.isEmpty()) hashMapOf() else trackJSON.comments.map {
-                                UUID.fromString(it.key) to Comment(it.key, it.value)
-                            }.toMap() as HashMap<UUID, Comment>
+                        track.comments = commentsHashMapToList(trackJSON.comments)
                     }
                 }
                 Log.d("FirebaseService", "Track ${snapshot.key} changed")
@@ -282,7 +282,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
         override fun onChildRemoved(snapshot: DataSnapshot) {
             val trackJSON = snapshot.getValue(TrackJSON::class.java)
             if (trackJSON != null) {
-                TODO("Not yet implemented")
+                tracks.removeIf { it.id == UUID.fromString(trackJSON.id) }
             }
         }
 
@@ -298,4 +298,56 @@ class TrackServiceImpl @Inject constructor(): TrackService {
         }
     }
 
+    class ChatMessagesListener(private val chatMessages: SnapshotStateList<ChatMessage>) : ChildEventListener {
+        @RequiresApi(Build.VERSION_CODES.O)
+        override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+            if (snapshot.value == null) {
+                return
+            }
+            if (snapshot.key == null) {
+                return
+            }
+            try {
+                val chatMessageJSON = snapshot.getValue(ChatMessageJSON::class.java)
+                if (chatMessageJSON != null) {
+                    Log.d("FirebaseService", "{{$snapshot}}")
+                    chatMessages.add(
+                        ChatMessage(
+                            snapshot.key!!,
+                            chatMessageJSON
+                        )
+                    )
+                }
+            }
+            catch (e: Exception) {
+                Log.e("FirebaseService", "Error onChildAdded", e)
+            }
+        }
+
+        override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onChildRemoved(snapshot: DataSnapshot) {
+            chatMessages.removeIf { it.id == snapshot.key }
+        }
+
+        override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            Log.e("FirebaseService", "Error onChildAdded", error.toException())
+        }
+    }
+}
+
+abstract class CommentsHashMapToList {
+    public fun commentsHashMapToList(comments: HashMap<String, CommentJSON>): List<Comment> {
+        val list = mutableListOf<Comment>()
+        for (comment in comments) {
+            list.add(Comment(comment.key, comment.value))
+        }
+        return list
+    }
 }
