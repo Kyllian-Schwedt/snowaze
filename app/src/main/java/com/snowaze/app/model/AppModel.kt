@@ -66,13 +66,13 @@ class SkiLift(
 }
 
 class Comment(
-    var id: UUID,
+    var id: String,
     var text: String,
     var authorId: String,
     var date: Date
 ) {
-    constructor() : this(UUID.randomUUID(), "", "", Date())
-    constructor(text: String, authorId: String) : this(UUID.randomUUID(), text, authorId, Date())
+    constructor() : this("", "", "", Date())
+    constructor(text: String, authorId: String) : this("", text, authorId, Date())
     public fun toJson(): CommentJSON {
         return CommentJSON(
             text = this.text,
@@ -81,5 +81,24 @@ class Comment(
         )
     }
 
-    constructor(id : String, json: CommentJSON) : this(UUID.fromString(id), json.text, json.author, Date(json.date))
+    constructor(id : String, json: CommentJSON) : this(id, json.text, json.author, Date(json.date))
+}
+
+class ChatMessage(
+    var id: String,
+    var text: String,
+    var authorId: String,
+    var date: Date
+) {
+    constructor() : this("","", "", Date())
+    constructor(text: String, authorId: String) : this("", text, authorId, Date())
+    public fun toJson(): ChatMessageJSON {
+        return ChatMessageJSON(
+            authorId = this.authorId,
+            text = this.text,
+            date = this.date.toString()
+        )
+    }
+
+    constructor(id : String, json: ChatMessageJSON) : this(id, json.text, json.authorId, Date(json.date))
 }

@@ -9,6 +9,7 @@ import javax.inject.Singleton
 interface TrackService {
     val skiLifts: SnapshotStateList<SkiLift>
     val tracks: SnapshotStateList<Track>
+    val chatMessages: SnapshotStateList<ChatMessage>
 
     /**
      * Update the status of a track
@@ -29,7 +30,7 @@ interface TrackService {
      * @param id The id of the track
      * @param comment The comment to add
      */
-    fun addCommentToTrack(id : UUID, comment: Comment)
+    fun addCommentToTrack(id : UUID, text: String, author: String)
 
     /**
      * Add a comment to a ski lift
@@ -37,6 +38,13 @@ interface TrackService {
      * @param comment The comment to add
      */
     fun addCommentToSkiLift(id : UUID, comment: Comment)
+
+    /**
+     * Add a chat message
+     * @param text The text of the message
+     * @param author The author of the message
+     */
+    fun addChatMessage(text: String, author: String)
 
     /**
      * Get all the possible path from a point to another
