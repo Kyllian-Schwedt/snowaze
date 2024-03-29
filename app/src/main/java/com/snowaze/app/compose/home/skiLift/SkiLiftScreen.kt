@@ -30,12 +30,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.snowaze.app.R
+import com.snowaze.app.compose.home.HomeViewModel
 import com.snowaze.app.model.SkiLift
 import com.snowaze.app.model.SkiLiftType
 import com.snowaze.app.model.Status
 
 @Composable
-fun SkiLiftScreen(skiLifts: List<SkiLift>, navController: NavHostController) {
+fun SkiLiftScreen(viewModel: HomeViewModel, navController: NavHostController) {
+    val skiLifts = viewModel.trackService.skiLifts
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -53,7 +55,7 @@ fun SkiLiftCard(skiLift: SkiLift, navController: NavHostController) {
             .combinedClickable(
                 enabled = true,
                 onClick = {
-                    /*TODO*/
+                    navController.navigate("skiLift/${skiLift.id}")
                 },
                 onLongClick = {
                     /*TODO*/
@@ -82,18 +84,18 @@ fun SkiLiftCard(skiLift: SkiLift, navController: NavHostController) {
                     modifier = Modifier.padding(bottom = 15.dp),
                     text = skiLift.name,
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold)
+                    fontWeight = FontWeight.Bold
+                )
                 Icon(
-                imageVector = when (skiLift.type) {
-                    SkiLiftType.CHAIRLIFT -> ImageVector.vectorResource(id = R.drawable.chair_lift_icon)
-                    SkiLiftType.GONDOLA -> ImageVector.vectorResource(id = R.drawable.gondola_lift_icon)
-                    SkiLiftType.TBAR -> ImageVector.vectorResource(id = R.drawable.noun_ski_lift_8803__1_)
-                },
-                contentDescription = "Ski Lift Icon",
-                tint = Color.Black,
-                modifier = Modifier.fillMaxHeight()
-            )
-
+                    imageVector = when (skiLift.type) {
+                        SkiLiftType.CHAIRLIFT -> ImageVector.vectorResource(id = R.drawable.chair_lift_icon)
+                        SkiLiftType.GONDOLA -> ImageVector.vectorResource(id = R.drawable.gondola_lift_icon)
+                        SkiLiftType.TBAR -> ImageVector.vectorResource(id = R.drawable.noun_ski_lift_8803__1_)
+                    },
+                    contentDescription = "Ski Lift Icon",
+                    tint = Color.Black,
+                    modifier = Modifier.fillMaxHeight()
+                )
 
 
             }
