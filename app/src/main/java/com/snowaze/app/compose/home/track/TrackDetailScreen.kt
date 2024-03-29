@@ -1,7 +1,6 @@
 package com.snowaze.app.compose.home.track
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -52,7 +51,9 @@ import java.util.UUID
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TrackDetailScreen(
-    id: UUID, navController: NavHostController, viewModel: TrackDetailViewModel = hiltViewModel()
+    id: UUID,
+    navController: NavHostController,
+    viewModel: TrackDetailViewModel = hiltViewModel()
 ) {
     val trackService: TrackService = viewModel.trackService
     val track = trackService.getTrack(id)
@@ -61,8 +62,6 @@ fun TrackDetailScreen(
     val accountId = accountService.currentUserId
     var newCommentText by rememberSaveable { mutableStateOf("") }
     val comments = track?.comments ?: emptyList()
-    Log.d("comment list", comments.toString()+"stop")
-
 
     if (track != null) {
         Column(

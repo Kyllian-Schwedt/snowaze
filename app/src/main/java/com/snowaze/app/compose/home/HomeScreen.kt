@@ -98,7 +98,7 @@ fun HomeScreen(
                             TrackScreen(viewModel = viewModel, navController = navController)
                         }
                         HomeTabs.SkiLifts -> {
-                            SkiLiftScreen(skiLifts = listOf(skiLift), navController = navController)
+                            SkiLiftScreen(viewModel, navController = navController)
                             //TODO :Use real data for ski lifts
                         }
                     }

@@ -10,7 +10,7 @@ interface TrackService {
     val tracks: SnapshotStateList<Track>
     val chatMessages: SnapshotStateList<ChatMessage>
 
-    /**s
+    /**
      * Update the status of a track
      * @param id The id of the track
      * @param status The new status of the track (OPENED, CLOSED)
@@ -22,6 +22,12 @@ interface TrackService {
      * @param id The id of the track
      */
     fun getTrack(id: UUID): Track?
+
+    /**
+     * Get a ski lift by its id
+     * @param id The id of the ski lift
+     */
+    fun getSkiLift(id: UUID): SkiLift?
 
     /**
      * Update the status of a ski lift

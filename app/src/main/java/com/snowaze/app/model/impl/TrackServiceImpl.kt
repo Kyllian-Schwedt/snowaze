@@ -70,6 +70,10 @@ class TrackServiceImpl @Inject constructor(): TrackService {
         return this.tracks.find { it.id == id }
     }
 
+    override fun getSkiLift(id: UUID): SkiLift? {
+        return this.skiLifts.find { it.id == id }
+    }
+
     override fun updateSkiLiftStatus(id: UUID, status: Status) {
         this.database.getReference("skiLifts").child(id.toString()).child("status").setValue(status.toString())
     }
@@ -346,7 +350,6 @@ abstract class CommentsHashMapToList {
     public fun commentsHashMapToList(comments: HashMap<String, CommentJSON>): List<Comment> {
         val list = mutableListOf<Comment>()
         for (comment in comments) {
-            list.add(Comment(comment.key, comment.value))
             list.add(Comment(comment.key, comment.value))
         }
         return list
