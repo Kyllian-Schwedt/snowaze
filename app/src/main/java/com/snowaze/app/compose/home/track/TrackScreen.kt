@@ -84,7 +84,11 @@ fun TrackCard(track: Track, navController: NavHostController) {
            ) {
                 Text(
                     modifier = Modifier.padding(bottom = 15.dp),
-                    text = track.name + " - " + track.section.toString(),
+                    text = if (track.section != 0) {
+                        "${track.name} - ${track.section}"
+                    } else {
+                        track.name
+                    },
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold)
                 Box(
