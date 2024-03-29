@@ -1,11 +1,14 @@
 package com.snowaze.app.compose.chat
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,6 +36,7 @@ import androidx.navigation.NavController
 import com.snowaze.app.model.TrackService
 import com.snowaze.app.ui.theme.md_theme_light_outline
 import com.snowaze.app.ui.theme.md_theme_light_primary
+import java.text.SimpleDateFormat
 
 @Composable
 fun ChatScreen(
@@ -43,35 +47,101 @@ fun ChatScreen(
     val chatMessages = trackService.chatMessages
     val accountService = viewModel.accountService
     val accountId = accountService.currentUserId
+    val timeFormatter = SimpleDateFormat("HH:mm")
+    val dateFormatter = SimpleDateFormat("dd/MM")
     var chatBoxValue by rememberSaveable { mutableStateOf("") }
-    Column (
-        modifier = Modifier.fillMaxHeight()
+    Column(
+        modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth()
+
     ) {
         LazyColumn(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
         ) {
             itemsIndexed(chatMessages) { index, chatMessage ->
-                Box(
+                val time = timeFormatter.format(chatMessage.date)
+                val date = dateFormatter.format(chatMessage.date)
+                Row(
                     modifier = Modifier
-                        .align(if (chatMessage.authorId == accountId) Alignment.End else Alignment.Start)
-                        .clip(
-                            RoundedCornerShape(
-                                topStart = 48f,
-                                topEnd = 48f,
-                                bottomStart = if (chatMessage.authorId == accountId) 48f else 0f,
-                                bottomEnd = if (chatMessage.authorId == accountId) 0f else 48f
-                            )
-                        )
-                        .background(
-                            if (chatMessage.authorId == accountId) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                MaterialTheme.colorScheme.onSurfaceVariant
-                            }
-                        )
-                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(text = chatMessage.text, color = MaterialTheme.colorScheme.primaryContainer)
+                    if ((index > 0 && dateFormatter.format(chatMessages[index - 1].date) != date) || (index == 0))
+                        Text(
+                            text = date,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier
+                                .padding(
+                                    vertical = 16.dp,
+                                )
+                        )
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = if (chatMessage.authorId == accountId) Arrangement.End else Arrangement.Start
+                ) {
+                    Column {
+                        if ((index > 0 && chatMessages[index - 1].authorId != chatMessage.authorId) || (index == 0))
+                            Text(
+                                text = (chatMessage.authorId),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier
+                                    .padding(
+                                        start = 8.dp,
+                                        end = 8.dp,
+                                    )
+                                    .align(if (chatMessage.authorId == accountId) Alignment.End else Alignment.Start)
+                            )
+                        Box(
+                            modifier = Modifier
+                                .padding(
+                                    start = 8.dp,
+                                    end = 8.dp,
+                                    top = 4.dp,
+                                )
+                                .widthIn(max = 300.dp)
+                                .align(if (chatMessage.authorId == accountId) Alignment.End else Alignment.Start)
+                                .clip(
+                                    RoundedCornerShape(
+                                        topStart = 48f,
+                                        topEnd = 48f,
+                                        bottomStart = if (chatMessage.authorId == accountId) 48f else 0f,
+                                        bottomEnd = if (chatMessage.authorId == accountId) 0f else 48f
+                                    )
+                                )
+                                .background(
+                                    if (chatMessage.authorId == accountId) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    }
+                                )
+                                .padding(16.dp)
+                        ) {
+                            Text(
+                                text = chatMessage.text,
+                                color = MaterialTheme.colorScheme.primaryContainer
+                            )
+                        }
+                        //display time
+                        if ((index < chatMessages.size - 1 && timeFormatter.format(chatMessages[index + 1].date) != time) || index == chatMessages.size - 1) {
+                            Text(
+                                text = time,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier
+                                    .padding(
+                                        start = 8.dp,
+                                        end = 8.dp,
+                                        top = 4.dp,
+                                        bottom = 4.dp
+                                    )
+                                    .align(if (chatMessage.authorId == accountId) Alignment.End else Alignment.Start)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -102,7 +172,7 @@ fun ChatScreen(
                     disabledContentColor = md_theme_light_outline
                 ),
                 enabled = chatBoxValue.isNotEmpty(),
-            ){
+            ) {
                 Icon(Icons.Outlined.Send, contentDescription = "Send")
             }
         }
