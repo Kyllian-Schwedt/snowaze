@@ -34,6 +34,8 @@ interface TrackService {
      * @param id The id of the ski lift
      * @param status The new status of the ski lift (OPENED, CLOSED)
      */
+
+
     fun updateSkiLiftStatus(id : UUID, status: Status)
 
     /**

@@ -3,9 +3,11 @@ package com.snowaze.app.compose.navigation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material.icons.outlined.Settings
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.snowaze.app.compose.chat.ChatScreen
 import com.snowaze.app.compose.home.HomeScreen
 import com.snowaze.app.compose.itinerary.ItineraryScreen
 import com.snowaze.app.compose.settings.SettingsScreen
@@ -39,6 +41,15 @@ val menuItems = listOf(
         navigationItem = NavigationItem(
             route = "settings",
             content = { navController: NavHostController -> SettingsScreen(navController) }
+        )
+    ),
+    NavigationDrawerItem(
+        title = "Chat",
+        selectedIcon = Icons.Outlined.MailOutline,
+        unselectedIcon = Icons.Outlined.MailOutline,
+        navigationItem = NavigationItem(
+            route = "chat",
+            content = { navController: NavHostController -> ChatScreen(navController, hiltViewModel()) }
         )
     )
 )
