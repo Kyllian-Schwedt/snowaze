@@ -29,6 +29,7 @@ import androidx.navigation.navArgument
 import com.snowaze.app.common.snackbar.SnackbarManager
 import com.snowaze.app.compose.navigation.DrawerContent
 import com.snowaze.app.compose.navigation.menuItems
+import com.snowaze.app.screens.auth.login.LoginScreen
 import com.snowaze.app.screens.auth.signup.SignUpScreen
 import com.snowaze.app.screens.auth.splash.SplashScreen
 import com.snowaze.app.ui.theme.AppTheme
@@ -86,9 +87,9 @@ fun NavGraphBuilder.snoWazeAppGraph(appState: SnoWazeAppState) {
         SplashScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
     }
 
-    /*composable(LOGIN_SCREEN) {
+    composable(LOGIN_SCREEN) {
         LoginScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
-    }*/
+    }
 
     composable(SIGN_UP_SCREEN) {
         SignUpScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })

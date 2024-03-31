@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "552161327479",
+    "firebase_url": "https://snowaze-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "snowaze",
     "storage_bucket": "snowaze.appspot.com"
   },

@@ -1,6 +1,14 @@
 package com.snowaze.app.model
 
 data class User(
-    val id: String = "",
+    open val id: String = "",
     val isAnonymous: Boolean = true
+)
+
+class UserDetail (
+    val name: String = "",
+    val maxTrackDifficulty: Difficulty = Difficulty.BLACK,
+    val minTrackDifficulty: Difficulty = Difficulty.GREEN,
+    val favoriteTracks: List<String> = emptyList(),
+    val photoUrl: String = ""
 )
