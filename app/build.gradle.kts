@@ -103,4 +103,8 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     ksp("com.google.dagger:hilt-compiler:2.47")
     kspAndroidTest("com.google.dagger:hilt-compiler:2.50")
+
+    // Lottie
+    val lottieVersion = "6.4.0"
+    implementation("com.airbnb.android:lottie-compose:$lottieVersion")
 }
