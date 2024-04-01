@@ -39,3 +39,11 @@ data class JsonModel(
 ) {
     constructor() : this(mapOf(), mapOf())
 }
+
+data class ChatMessageJSON(
+    val authorId: String,
+    val text: String,
+    val date: String,
+) {
+    constructor() : this("", "", "")
+}

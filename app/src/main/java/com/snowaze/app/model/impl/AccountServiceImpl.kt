@@ -18,7 +18,6 @@ import kotlinx.coroutines.tasks.await
 
 class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth, private val store: FirebaseFirestore) : AccountService {
 
-
     override val currentUserId: String
         get() = auth.currentUser?.uid.orEmpty()
 
@@ -73,7 +72,6 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth, pri
     }
 
     override suspend fun linkAccount(email: String, password: String): Unit {
-        //TODO check if user exist else need to register
         Trace.beginSection(LINK_ACCOUNT_TRACE)
         try {
             if(auth.currentUser == null) {

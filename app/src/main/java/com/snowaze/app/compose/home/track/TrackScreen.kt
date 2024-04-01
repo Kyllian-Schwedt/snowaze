@@ -23,10 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -35,13 +31,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.snowaze.app.compose.home.HomeViewModel
 import com.snowaze.app.model.Difficulty
 import com.snowaze.app.model.Status
 import com.snowaze.app.model.Track
 
 
 @Composable
-fun TrackScreen(tracks: List<Track>, navController: NavHostController) {
+fun TrackScreen(viewModel: HomeViewModel, navController: NavHostController) {
+    val tracks = viewModel.trackService.tracks
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -59,7 +57,7 @@ fun TrackCard(track: Track, navController: NavHostController) {
             .combinedClickable(
                 enabled = true,
                 onClick = {
-                    /*TODO*/
+                    navController.navigate("track/${track.id}")
                 },
                 onLongClick = {
                     /*TODO*/
@@ -86,7 +84,11 @@ fun TrackCard(track: Track, navController: NavHostController) {
            ) {
                 Text(
                     modifier = Modifier.padding(bottom = 15.dp),
-                    text = track.name,
+                    text = if (track.section != 0) {
+                        "${track.name} - ${track.section}"
+                    } else {
+                        track.name
+                    },
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold)
                 Box(

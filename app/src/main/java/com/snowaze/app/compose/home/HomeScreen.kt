@@ -18,11 +18,8 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -33,7 +30,6 @@ import com.snowaze.app.compose.home.track.TrackScreen
 import com.snowaze.app.model.SkiLift
 import com.snowaze.app.model.SkiLiftType
 import com.snowaze.app.model.Status
-import com.snowaze.app.model.Track
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -46,7 +42,6 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { HomeTabs.entries.size })
     val selectedTabIndex = remember { derivedStateOf { pagerState.currentPage } }
-    viewModel.trackService.tracks
     //TODO : Implement the track service from the model
     Log.d("HomeScreen", "HomeScreen")
     Log.d("HomeScreen", "Il y a ${viewModel.trackService.tracks.count()} pistes")
@@ -100,10 +95,10 @@ fun HomeScreen(
                 ) {
                     when (HomeTabs.entries[pagerState.currentPage]) {
                         HomeTabs.Tracks -> {
-                            TrackScreen(tracks = viewModel.trackService.tracks, navController = navController)
+                            TrackScreen(viewModel = viewModel, navController = navController)
                         }
                         HomeTabs.SkiLifts -> {
-                            SkiLiftScreen(skiLifts = listOf(skiLift), navController = navController)
+                            SkiLiftScreen(viewModel, navController = navController)
                             //TODO :Use real data for ski lifts
                         }
                     }
