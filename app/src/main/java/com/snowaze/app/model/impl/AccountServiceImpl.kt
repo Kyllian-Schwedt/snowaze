@@ -4,6 +4,7 @@ import android.os.Trace
 import androidx.core.os.trace
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.snowaze.app.model.AccountService
@@ -35,7 +36,28 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth, pri
         }
 
     override suspend fun authenticate(email: String, password: String) {
-        auth.signInWithEmailAndPassword(email, password).await()
+        try {
+            auth.signInWithEmailAndPassword(email, password).await()
+        } catch (e: FirebaseAuthException) {
+            // Handle the exception
+            when (e.errorCode) {
+                "ERROR_INVALID_EMAIL" -> {
+                    // Handle invalid email
+                }
+
+                "ERROR_WRONG_PASSWORD" -> {
+                    // Handle wrong password
+                }
+
+                "ERROR_USER_NOT_FOUND" -> {
+                    // Handle user not found
+                }
+
+                else -> {
+                    // Handle other errors
+                }
+            }
+        }
     }
 
     override suspend fun sendRecoveryEmail(email: String) {
@@ -51,6 +73,7 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth, pri
     }
 
     override suspend fun linkAccount(email: String, password: String): Unit {
+        //TODO check if user exist else need to register
         Trace.beginSection(LINK_ACCOUNT_TRACE)
         try {
             if(auth.currentUser == null) {
