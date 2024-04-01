@@ -34,23 +34,28 @@ class LoginViewModel @Inject constructor(
 
     fun onSignInClick(openAndPopUp: (String, String) -> Unit) {
         if (!email.isValidEmail()) {
+            uiState.value = uiState.value.copy(hasErrorEmail = true)
             SnackbarManager.showMessage(AppText.email_error)
             return
         }
 
         if (password.isBlank()) {
+            uiState.value = uiState.value.copy(hasErrorPass = true)
             SnackbarManager.showMessage(AppText.empty_password_error)
             return
         }
 
+        uiState.value = uiState.value.copy(isLoading = true)
+
         launchCatching {
-            accountService.linkAccount(email, password)
+            accountService.authenticate(email, password)
             openAndPopUp(MAIN_APP, SIGN_UP_SCREEN)
         }
     }
 
     fun onForgotPasswordClick() {
         if (!email.isValidEmail()) {
+            uiState.value = uiState.value.copy(hasErrorEmail = true)
             SnackbarManager.showMessage(AppText.email_error)
             return
         }
