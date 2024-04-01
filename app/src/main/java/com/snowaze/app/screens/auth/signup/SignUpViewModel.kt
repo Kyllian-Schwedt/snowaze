@@ -62,6 +62,8 @@ class SignUpViewModel @Inject constructor(
             return
         }
 
+        uiState.value = uiState.value.copy(isLoading = true)
+
         launchCatching {
             accountService.linkAccount(email, password)
             openAndPopUp(MAIN_APP, SIGN_UP_SCREEN)
