@@ -1,6 +1,7 @@
 package com.snowaze.app.model.impl
 
 import android.os.Trace
+import android.util.Log
 import androidx.core.os.trace
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -23,6 +24,28 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth, pri
 
     override val hasUser: Boolean
         get() = auth.currentUser != null
+
+    override val fullUser: Flow<UserDetail?>
+        get() = callbackFlow {
+            val listener = store.collection("users").document(currentUserId)
+                .addSnapshotListener { snapshot, e ->
+                    if (e != null) {
+                        // Log the error
+                        return@addSnapshotListener
+                    }
+
+                    if (snapshot != null && snapshot.exists()) {
+                        val userDetail = snapshot.toObject(UserDetail::class.java)
+                        trySend(userDetail)
+                    } else {
+                        trySend(null)
+                    }
+                }
+
+            awaitClose { listener.remove() }
+        }
+
+    override val syncFullUser: UserDetail? = null
 
     override val currentUser: Flow<User>
         get() = callbackFlow {
@@ -107,12 +130,14 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth, pri
     }
 
     //Store user data in Firestore
-    suspend fun storeUserData(userDetail: UserDetail) {
+    override suspend fun storeUserData(userDetail: UserDetail) {
+        Log.d("AccountServiceImpl", "setUserData : $currentUserId")
         store.collection("users").document(currentUserId).set(userDetail).await()
     }
 
     //Get user data from Firestore
-    suspend fun getUserData(): UserDetail? {
+    override suspend fun getUserData(): UserDetail? {
+        Log.d("AccountServiceImpl", "getUserData : $currentUserId")
         return store.collection("users").document(currentUserId).get().await().toObject(UserDetail::class.java)
     }
 

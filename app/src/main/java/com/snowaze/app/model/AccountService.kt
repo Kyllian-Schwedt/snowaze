@@ -5,8 +5,12 @@ import kotlinx.coroutines.flow.Flow
 interface AccountService {
     val currentUserId: String
     val hasUser: Boolean
+    val fullUser: Flow<UserDetail?>
+
+    val syncFullUser: UserDetail?
 
     val currentUser: Flow<User>
+
 
     suspend fun authenticate(email: String, password: String)
     suspend fun sendRecoveryEmail(email: String)
@@ -15,5 +19,7 @@ interface AccountService {
     suspend fun linkAccount(email: String, password: String)
     suspend fun deleteAccount()
     suspend fun signOut()
+    suspend fun storeUserData(userDetail: UserDetail)
+    suspend fun getUserData(): UserDetail?
     suspend fun googleSignIn(idToken: String)
 }

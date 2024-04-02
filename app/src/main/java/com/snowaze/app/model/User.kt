@@ -6,7 +6,9 @@ data class User(
 )
 
 class UserDetail (
-    val name: String = "",
+    val firstName: String = "",
+    val lastName: String = "",
+    val pseudo: String = "",
     val maxTrackDifficulty: Difficulty = Difficulty.BLACK,
     val minTrackDifficulty: Difficulty = Difficulty.GREEN,
     val favoriteTracks: List<String> = emptyList(),
