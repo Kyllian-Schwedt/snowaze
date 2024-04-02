@@ -17,7 +17,7 @@ class OnboardingViewModel @Inject constructor(
 
     val onboardingList = listOf(
         Onboard(
-            "Your skier profile",
+            "Your skiing profile",
             "Our application need to know more about you to provide you the best experience",
             OnboardingStep.PROFILE,
             "profile.json",
