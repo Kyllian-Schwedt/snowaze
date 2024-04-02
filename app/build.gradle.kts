@@ -108,5 +108,6 @@ dependencies {
     val lottieVersion = "6.4.0"
     implementation("com.airbnb.android:lottie-compose:$lottieVersion")
     implementation("com.github.Gurupreet:FontAwesomeCompose:1.0.0")
+    implementation("androidx.compose.material:material-icons-extended")
 
 }
