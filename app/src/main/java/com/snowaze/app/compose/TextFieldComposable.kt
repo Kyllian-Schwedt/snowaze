@@ -27,17 +27,23 @@ import com.snowaze.app.ui.theme.TextFieldDefaultsMaterial
 
 @Composable
 fun BasicField(
-    @StringRes text: Int,
-    value: String,
-    onNewValue: (String) -> Unit,
-    modifier: Modifier = Modifier
+    value: String, onValueChange: (String) -> Unit, hasError: Boolean = false, placeholder: String, label: String
 ) {
+    val fieldInteractionState = remember { MutableInteractionSource() }
     OutlinedTextField(
-        singleLine = true,
-        modifier = modifier,
         value = value,
-        onValueChange = { onNewValue(it) },
-        placeholder = { Text(stringResource(text)) }
+        maxLines = 1,
+        isError = hasError,
+        modifier = Modifier.fillMaxWidth(),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Next
+        ),
+        colors = TextFieldDefaultsMaterial.outlinedTextFieldColors(),
+        label = { Text(text = label) },
+        placeholder = { Text(text = placeholder) },
+        onValueChange = onValueChange,
+        interactionSource = fieldInteractionState,
     )
 }
 
@@ -131,4 +137,39 @@ private fun PasswordField(
         interactionSource = passwordInteractionState,
         visualTransformation = passwordVisualTransformation,
     )
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun ExposedDropdownMenu(options: List<String>, label: String?, onValueChange: (String) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedOptionText by remember { mutableStateOf(options[0]) }
+    // We want to react on tap/press on TextField to show menu
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+    ) {
+        TextField(
+            readOnly = true,
+            value = selectedOptionText,
+            onValueChange =onValueChange,
+            label = { if(label != null) Text(label) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            options.forEach { selectionOption ->
+                DropdownMenuItem(
+                    content = { Text(selectionOption) },
+                    onClick = {
+                        selectedOptionText = selectionOption
+                        expanded = false
+                    },
+                )
+            }
+        }
+    }
 }
