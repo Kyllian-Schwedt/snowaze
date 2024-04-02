@@ -32,6 +32,7 @@ import com.snowaze.app.compose.navigation.menuItems
 import com.snowaze.app.screens.auth.login.LoginScreen
 import com.snowaze.app.screens.auth.signup.SignUpScreen
 import com.snowaze.app.screens.auth.splash.SplashScreen
+import com.snowaze.app.screens.onboarding.OnboardingScreen
 import com.snowaze.app.ui.theme.AppTheme
 import kotlinx.coroutines.CoroutineScope
 
@@ -96,5 +97,9 @@ fun NavGraphBuilder.snoWazeAppGraph(appState: SnoWazeAppState) {
     }
 
     composable(MAIN_APP) { DrawerContent(menuItems = menuItems) }
+
+    composable(ONBOARDING_SCREEN) {
+        OnboardingScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
+    }
 
 }
