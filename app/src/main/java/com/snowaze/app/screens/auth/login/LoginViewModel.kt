@@ -3,6 +3,7 @@ package com.snowaze.app.screens.auth.login
 import androidx.compose.runtime.mutableStateOf
 import com.snowaze.app.LOGIN_SCREEN
 import com.snowaze.app.MAIN_APP
+import com.snowaze.app.ONBOARDING_SCREEN
 import com.snowaze.app.SIGN_UP_SCREEN
 import com.snowaze.app.common.ext.isValidEmail
 import com.snowaze.app.common.snackbar.SnackbarManager
@@ -49,7 +50,7 @@ class LoginViewModel @Inject constructor(
 
         launchCatching {
             accountService.authenticate(email, password)
-            openAndPopUp(MAIN_APP, SIGN_UP_SCREEN)
+            openAndPopUp(ONBOARDING_SCREEN, SIGN_UP_SCREEN)
         }
     }
 
@@ -67,6 +68,8 @@ class LoginViewModel @Inject constructor(
     }
 
     fun gotoSignUp(openAndPopUp: (String, String) -> Unit) {
-        openAndPopUp(SIGN_UP_SCREEN, LOGIN_SCREEN)
+        launchCatching {
+            openAndPopUp(SIGN_UP_SCREEN, LOGIN_SCREEN)
+        }
     }
 }

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import com.google.firebase.auth.FirebaseAuthException
 import com.snowaze.app.MAIN_APP
+import com.snowaze.app.ONBOARDING_SCREEN
 import com.snowaze.app.SIGN_UP_SCREEN
 import com.snowaze.app.SPLASH_SCREEN
 import com.snowaze.app.model.AccountService
@@ -26,8 +27,13 @@ class SplashViewModel @Inject constructor(
     fun onAppStart(openAndPopUp: (String, String) -> Unit) {
 
         showError.value = false
-        if (accountService.hasUser) openAndPopUp(MAIN_APP, SPLASH_SCREEN)
-        else createAnonymousAccount(openAndPopUp)
+        launchCatching {
+            accountService.fullUser.collect {
+                if (it != null) openAndPopUp(MAIN_APP, SPLASH_SCREEN)
+                else if(accountService.hasUser) openAndPopUp(ONBOARDING_SCREEN, SPLASH_SCREEN)
+                else createAnonymousAccount(openAndPopUp)
+            }
+        }
     }
 
     private fun createAnonymousAccount(openAndPopUp: (String, String) -> Unit) {

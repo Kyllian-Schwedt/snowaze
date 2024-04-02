@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun HorizontalDottedProgressBar() {
+fun HorizontalDottedProgressBar(modifier: Modifier? = null) {
     val color = MaterialTheme.colors.onPrimary
     val transition = rememberInfiniteTransition(label = "")
     val state by transition.animateFloat(
@@ -34,7 +34,7 @@ fun HorizontalDottedProgressBar() {
         ), label = ""
     )
 
-    DrawCanvas(state = state, color = color)
+    DrawCanvas(state = state, color = color, modifier = modifier)
 }
 
 
@@ -42,11 +42,10 @@ fun HorizontalDottedProgressBar() {
 fun DrawCanvas(
     state: Float,
     color: Color,
+    modifier: Modifier? = null
 ) {
     Canvas(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(60.dp),
+        modifier = modifier ?: Modifier.fillMaxWidth().height(60.dp)
     ) {
 
         val radius = (4.dp).value

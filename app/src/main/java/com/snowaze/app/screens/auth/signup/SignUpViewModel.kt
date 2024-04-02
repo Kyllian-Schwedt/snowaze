@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuthException
 import com.snowaze.app.LOGIN_SCREEN
 import com.snowaze.app.MAIN_APP
+import com.snowaze.app.ONBOARDING_SCREEN
 import com.snowaze.app.SIGN_UP_SCREEN
 import com.snowaze.app.common.ext.isValidEmail
 import com.snowaze.app.common.ext.isValidPassword
@@ -66,7 +67,7 @@ class SignUpViewModel @Inject constructor(
 
         launchCatching {
             accountService.linkAccount(email, password)
-            openAndPopUp(MAIN_APP, SIGN_UP_SCREEN)
+            openAndPopUp(ONBOARDING_SCREEN, SIGN_UP_SCREEN)
         }
     }
 
