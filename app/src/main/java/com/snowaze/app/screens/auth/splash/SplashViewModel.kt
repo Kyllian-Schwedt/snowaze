@@ -28,10 +28,13 @@ class SplashViewModel @Inject constructor(
 
         showError.value = false
         launchCatching {
-            accountService.fullUser.collect {
-                if (it != null) openAndPopUp(MAIN_APP, SPLASH_SCREEN)
-                else if(accountService.hasUser) openAndPopUp(ONBOARDING_SCREEN, SPLASH_SCREEN)
-                else createAnonymousAccount(openAndPopUp)
+            if(accountService.hasUser) {
+                accountService.fullUser.collect {
+                    if (it != null) openAndPopUp(MAIN_APP, SPLASH_SCREEN)
+                    else openAndPopUp(ONBOARDING_SCREEN, SPLASH_SCREEN)
+                }
+            } else {
+                createAnonymousAccount(openAndPopUp)
             }
         }
     }
