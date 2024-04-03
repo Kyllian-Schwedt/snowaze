@@ -15,12 +15,14 @@ fun LottieLoadingView(
     context: Context,
     file: String,
     modifier: Modifier = Modifier,
-    iterations: Int = 10
+    iterations: Int = 10,
+    reverseOnRepeat: Boolean = false
 ) {
     val composition by rememberLottieComposition(LottieCompositionSpec.Asset(file))
     LottieAnimation(
         composition,
         modifier = modifier.defaultMinSize(300.dp),
-        iterations = iterations
+        iterations = iterations,
+        reverseOnRepeat = reverseOnRepeat
     )
 }

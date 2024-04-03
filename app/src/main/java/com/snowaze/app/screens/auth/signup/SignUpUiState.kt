@@ -7,5 +7,6 @@ data class SignUpUiState(
     val hasErrorEmail : Boolean = false,
     val hasErrorPass: Boolean = false,
     val hasErrorRepeatPass: Boolean = false,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val isGoogleLoading: Boolean = false
 )

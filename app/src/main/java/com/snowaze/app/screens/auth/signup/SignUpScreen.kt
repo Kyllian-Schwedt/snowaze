@@ -46,6 +46,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
+import com.snowaze.app.compose.lottie.LottieGoogleLoadingView
 import com.snowaze.app.compose.lottie.LottieWorkingLoadingView
 import com.snowaze.app.compose.progress.HorizontalDottedProgressBar
 
@@ -63,6 +64,9 @@ fun SignUpScreen(
         onRepeatPasswordChange = viewModel::onRepeatPasswordChange,
         onSignUpClick = { viewModel.onSignUpClick(openAndPopUp) },
         goToSignIn = { viewModel.goToSignIn(openAndPopUp) },
+        openAndPopUp = openAndPopUp,
+        authenticateWithGoogle = viewModel::authenticateWithGoogle,
+        getGso = viewModel::getGso
     )
 }
 
@@ -75,6 +79,9 @@ fun SignUpScreenContent(
     onRepeatPasswordChange: (String) -> Unit,
     onSignUpClick: () -> Unit,
     goToSignIn: () -> Unit,
+    openAndPopUp: (String, String) -> Unit,
+    authenticateWithGoogle: (String?, (String, String) -> Unit) -> Unit,
+    getGso: () -> GoogleSignInOptions
 ) {
     Scaffold { paddingValues ->
 
@@ -100,6 +107,13 @@ fun SignUpScreenContent(
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
             }
+
+            if(uiState.isGoogleLoading) {
+                item {
+                    Log.d("SignUpScreen", "Google sign-in loading")
+                    LottieGoogleLoadingView(context = LocalContext.current)
+                }
+            } else {
 
             item {
                 EmailField(uiState.email, onEmailChange, uiState.hasErrorEmail)
@@ -134,6 +148,7 @@ fun SignUpScreenContent(
                     }
                 }
             }
+            }
 
             item {
                 Box(modifier = Modifier.padding(vertical = 16.dp)) {
@@ -156,8 +171,30 @@ fun SignUpScreenContent(
             }
 
             item {
+                val context = LocalContext.current
+                val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                    try {
+                        val account = task.getResult(ApiException::class.java)
+                        if (account != null) {
+                            val idToken = account.idToken
+                            //googleSignIn(idToken!!)
+                            authenticateWithGoogle(idToken, openAndPopUp)
+                        } else {
+                            Log.e("SignUpScreen", "Google sign-in failed: account is null")
+                        }
+                    } catch (e: ApiException) {
+                        Log.e("SignUpScreen", "Google sign-in failed: ${e.message} ${e.statusCode} ${e.localizedMessage} ${e.cause}  ${e.stackTraceToString()}")
+                    }
+                }
+
                 OutlinedButton(
-                    onClick = { }, modifier = Modifier
+                    onClick = {
+                        val gso = getGso()
+                        val client = GoogleSignIn.getClient(context, gso)
+                        val signInIntent = client.signInIntent
+                        launcher.launch(signInIntent)
+                    }, modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
                 ) {
@@ -199,7 +236,7 @@ fun SignUpScreenContent(
 }
 
 @Composable
-fun GoogleSignInButton() {
+fun GoogleSignInButton(openAndPopUp: (String, String) -> Unit){
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)

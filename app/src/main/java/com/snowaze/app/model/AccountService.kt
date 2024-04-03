@@ -1,5 +1,6 @@
 package com.snowaze.app.model
 
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import kotlinx.coroutines.flow.Flow
 
 interface AccountService {
@@ -22,4 +23,5 @@ interface AccountService {
     suspend fun storeUserData(userDetail: UserDetail)
     suspend fun getUserData(): UserDetail?
     suspend fun googleSignIn(idToken: String)
+    fun getGso(): GoogleSignInOptions
 }

@@ -3,6 +3,7 @@ package com.snowaze.app.model.impl
 import android.os.Trace
 import android.util.Log
 import androidx.core.os.trace
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
@@ -144,6 +145,13 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth, pri
     override suspend fun googleSignIn(idToken: String): Unit {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential).await()
+    }
+
+    override fun getGso(): GoogleSignInOptions {
+        return GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .requestIdToken("552161327479-5ac2rc45lcv65sn5lmpb2vdsa7mcnvmo.apps.googleusercontent.com")
+            .build()
     }
 
 

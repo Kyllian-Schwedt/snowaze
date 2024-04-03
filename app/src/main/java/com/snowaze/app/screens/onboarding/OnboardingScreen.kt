@@ -79,7 +79,7 @@ fun OnBoardingScreenContent(
             Pager(
                 state = pagerState,
                 orientation = Orientation.Horizontal,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().padding(bottom = 100.dp),
                 canProceed = canAccessNextPage
             ) {
                 OnboardingPagerItem(onboardingList[commingPage], uiState, onFirstNameChange, onLastNameChange, onPseudoChange, onSkillChange)
@@ -87,7 +87,7 @@ fun OnBoardingScreenContent(
             Row(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 120.dp)
+                    .padding(bottom = 100.dp)
             ) {
                 onboardingList.forEachIndexed { index, _ ->
                     OnboardingPagerSlide(
