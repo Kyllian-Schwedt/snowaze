@@ -2,6 +2,8 @@ package com.snowaze.app.screens.onboarding
 
 import android.app.Application
 import androidx.compose.runtime.mutableStateOf
+import com.snowaze.app.MAIN_APP
+import com.snowaze.app.ONBOARDING_SCREEN
 import com.snowaze.app.common.utils.pager.PagerState
 import com.snowaze.app.model.AccountService
 import com.snowaze.app.model.Difficulty
@@ -41,6 +43,8 @@ class OnboardingViewModel @Inject constructor(
     )
     var uiState = mutableStateOf(OnboardingUiState(pagerState = PagerState(0, 0, onboardingList.size - 1)))
         private set
+
+    var openAndPopUp: ((String, String) -> Unit)? = null
 
     private val currentPage
         get() = uiState.value.pagerState.currentPage
@@ -97,6 +101,10 @@ class OnboardingViewModel @Inject constructor(
                     maxTrackDifficulty = uiState.value.skill,
                 )
             )
+
+            if(openAndPopUp != null) {
+                openAndPopUp?.let { it(MAIN_APP, ONBOARDING_SCREEN) }
+            }
         }
     }
 

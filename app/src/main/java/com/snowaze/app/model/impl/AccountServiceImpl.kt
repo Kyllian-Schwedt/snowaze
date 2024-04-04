@@ -37,6 +37,7 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth, pri
 
                     if (snapshot != null && snapshot.exists()) {
                         val userDetail = snapshot.toObject(UserDetail::class.java)
+                        this@AccountServiceImpl.syncFullUser = userDetail
                         trySend(userDetail)
                     } else {
                         trySend(null)
@@ -46,7 +47,7 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth, pri
             awaitClose { listener.remove() }
         }
 
-    override val syncFullUser: UserDetail? = null
+    override var syncFullUser: UserDetail? = null
 
     override val currentUser: Flow<User>
         get() = callbackFlow {

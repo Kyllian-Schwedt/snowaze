@@ -43,6 +43,7 @@ fun OnboardingScreen(
     viewModel: OnboardingViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState
+    viewModel.openAndPopUp = openAndPopUp
 
     OnBoardingScreenContent(
         onSkip = { openAndPopUp("login", "signup") },
@@ -97,13 +98,15 @@ fun OnBoardingScreenContent(
                     )
                 }
             }
+
             Button(
                 onClick = {
                         onboardingList[pagerState.currentPage].btnfunction()
                 },
                 modifier = Modifier
-                    .animateContentSize()
+                    .fillMaxWidth(0.5f)
                     .align(Alignment.BottomCenter)
+                    .animateContentSize()
                     .padding(bottom = 32.dp)
                     .height(50.dp)
                     .clip(CircleShape)
