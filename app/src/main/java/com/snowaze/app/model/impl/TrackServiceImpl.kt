@@ -194,6 +194,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                             hop = mutableListOf(),
                             x = skiLiftJSON.x,
                             y = skiLiftJSON.y,
+                            hopIds = skiLiftJSON.hop.map { UUID.fromString(it) }
                         )
                     )
                     Log.d("FirebaseService", "SkiLift ${snapshot.key} added")
@@ -225,6 +226,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                         skiLift.marker?.x = skiLift.x
                         skiLift.marker?.y = skiLift.y
                         skiLift.marker?.data?.value = skiLift
+                        skiLift.hopIds = skiLiftJSON.hop.map { UUID.fromString(it)}
                     }
                 }
                 Log.d("FirebaseService", "SkiLift ${snapshot.key} changed")
@@ -276,7 +278,8 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                             },
                             hop = mutableListOf(),
                             x = trackJSON.x,
-                            y = trackJSON.y
+                            y = trackJSON.y,
+                            hopIds = trackJSON.hop.map { UUID.fromString(it) }
                         )
                     )
                     Log.d("FirebaseService", "Track ${snapshot.key} added")
@@ -308,6 +311,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                         track.marker?.x = track.x
                         track.marker?.y = track.y
                         track.marker?.data?.value = track
+                        track.hopIds = trackJSON.hop.map { UUID.fromString(it) }
                     }
                 }
                 Log.d("FirebaseService", "Track ${snapshot.key} changed")

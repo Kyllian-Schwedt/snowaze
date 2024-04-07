@@ -24,6 +24,7 @@ class Track (
     var section: Int,
     val difficulty: Difficulty,
     var status: MutableState<Status>,
+    var hopIds: List<UUID>,
     override var x: Int,
     override var y: Int,
     var marker: ImageMarker? = null
@@ -55,6 +56,7 @@ class SkiLift(
     override var comments: List<Comment>,
     var type: SkiLiftType,
     var status: Status,
+    var hopIds: List<UUID>,
     override var x: Int,
     override var y: Int,
     var marker: ImageMarker? = null
