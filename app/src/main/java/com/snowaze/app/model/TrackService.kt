@@ -1,6 +1,10 @@
 package com.snowaze.app.model
 
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.snowaze.app.screens.map.ImageMarker
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.util.UUID
 import javax.inject.Singleton
 
@@ -9,6 +13,7 @@ interface TrackService {
     val skiLifts: SnapshotStateList<SkiLift>
     val tracks: SnapshotStateList<Track>
     val chatMessages: SnapshotStateList<ChatMessage>
+    val markers: Flow<List<ImageMarker>>
 
     /**
      * Update the status of a track

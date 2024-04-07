@@ -24,6 +24,12 @@ import com.snowaze.app.model.Status
 import com.snowaze.app.model.Track
 import com.snowaze.app.model.TrackJSON
 import com.snowaze.app.model.TrackService
+import com.snowaze.app.screens.map.ImageMarker
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -36,6 +42,9 @@ class TrackServiceImpl @Inject constructor(): TrackService {
     override val skiLifts: SnapshotStateList<SkiLift> = SnapshotStateList()
     override val tracks: SnapshotStateList<Track> = SnapshotStateList()
     override val chatMessages: SnapshotStateList<ChatMessage> = SnapshotStateList()
+
+    private val _markers = MutableStateFlow<List<ImageMarker>>(emptyList())
+    override val markers: Flow<List<ImageMarker>> = _markers.asStateFlow()
 
     init {
         val ref = this.database.reference
@@ -51,10 +60,21 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                     for (skiLift in this.skiLifts) {
                         skiLift.hop = paths.filter { it.id.toString() in value.skiLifts[skiLift.id.toString()]!!.hop }
                     }
-                    ref.child("tracks").addChildEventListener(TrackListener(this.tracks))
+                    ref.child("tracks").addChildEventListener(TrackListener(this.tracks, this._markers))
 
-                    ref.child("skiLifts").addChildEventListener(SkiLiftListener(this.skiLifts))
+                    ref.child("skiLifts").addChildEventListener(SkiLiftListener(this.skiLifts, this._markers))
                     ref.child("chatMessages").addChildEventListener(ChatMessagesListener(this.chatMessages))
+
+                    tracks.forEach { track ->
+                        val newMarker = ImageMarker(track.x, track.y, mutableStateOf(track))
+                        track.marker = newMarker
+                        _markers.value += newMarker
+                    }
+                    skiLifts.forEach { skiLift ->
+                        val newMarker = ImageMarker(skiLift.x, skiLift.y, mutableStateOf(skiLift))
+                        skiLift.marker = newMarker
+                        _markers.value += newMarker
+                    }
                 }
             }
         } catch (e: Exception) {
@@ -151,7 +171,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
         return paths
     }
 
-    class SkiLiftListener(private val skiLifts: SnapshotStateList<SkiLift>) : ChildEventListener, CommentsHashMapToList() {
+    class SkiLiftListener(private val skiLifts: SnapshotStateList<SkiLift>, private val markers: MutableStateFlow<List<ImageMarker>>) : ChildEventListener, CommentsHashMapToList() {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             Log.d("FirebaseService", "SkiLift ${snapshot.key} added")
@@ -171,9 +191,13 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                                 Log.e("FirebaseService", "Error parsing Status", e)
                                 Status.UNKNOWN
                             },
-                            hop = mutableListOf()
+                            hop = mutableListOf(),
+                            x = skiLiftJSON.x,
+                            y = skiLiftJSON.y,
                         )
                     )
+                    Log.d("FirebaseService", "SkiLift ${snapshot.key} added")
+                    markers.value += ImageMarker(skiLiftJSON.x, skiLiftJSON.y, mutableStateOf(skiLifts.last()))
                 }
             }
             catch (e: Exception) {
@@ -198,6 +222,9 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                             Log.e("FirebaseService", "Error parsing Status", e)
                         }
                         skiLift.comments = commentsHashMapToList(skiLiftJSON.comments)
+                        skiLift.marker?.x = skiLift.x
+                        skiLift.marker?.y = skiLift.y
+                        skiLift.marker?.data?.value = skiLift
                     }
                 }
                 Log.d("FirebaseService", "SkiLift ${snapshot.key} changed")
@@ -226,7 +253,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
         }
     }
 
-    class TrackListener(private val tracks: SnapshotStateList<Track>) : ChildEventListener,
+    class TrackListener(private val tracks: SnapshotStateList<Track>, private val markers: MutableStateFlow<List<ImageMarker>>) : ChildEventListener,
         CommentsHashMapToList() {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
@@ -247,9 +274,13 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                                 Log.e("FirebaseService", "Error parsing Status", e)
                                 mutableStateOf(Status.UNKNOWN)
                             },
-                            hop = mutableListOf()
+                            hop = mutableListOf(),
+                            x = trackJSON.x,
+                            y = trackJSON.y
                         )
                     )
+                    Log.d("FirebaseService", "Track ${snapshot.key} added")
+                    markers.value += ImageMarker(trackJSON.x, trackJSON.y, mutableStateOf(tracks.last()))
                 }
             }
             catch (e: Exception) {
@@ -274,6 +305,9 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                             Log.e("FirebaseService", "Error parsing Status", e)
                         }
                         track.comments = commentsHashMapToList(trackJSON.comments)
+                        track.marker?.x = track.x
+                        track.marker?.y = track.y
+                        track.marker?.data?.value = track
                     }
                 }
                 Log.d("FirebaseService", "Track ${snapshot.key} changed")
