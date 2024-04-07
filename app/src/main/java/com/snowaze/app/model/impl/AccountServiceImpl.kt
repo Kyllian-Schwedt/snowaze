@@ -94,6 +94,7 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth, pri
 
     override suspend fun register(email: String, password: String) {
         auth.createUserWithEmailAndPassword(email, password).await()
+        authenticate(email, password)
     }
 
     override suspend fun linkAccount(email: String, password: String): Unit {
@@ -135,6 +136,7 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth, pri
     override suspend fun storeUserData(userDetail: UserDetail) {
         Log.d("AccountServiceImpl", "setUserData : $currentUserId")
         store.collection("users").document(currentUserId).set(userDetail).await()
+
     }
 
     //Get user data from Firestore
