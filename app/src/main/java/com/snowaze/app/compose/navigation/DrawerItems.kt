@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.MailOutline
+import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material.icons.outlined.Settings
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -13,6 +14,7 @@ import com.snowaze.app.compose.itinerary.ItineraryScreen
 import com.snowaze.app.compose.settings.SettingsScreen
 import com.snowaze.app.data.navigation.NavigationDrawerItem
 import com.snowaze.app.data.navigation.NavigationItem
+import com.snowaze.app.screens.map.MapScreen
 
 val menuItems = listOf(
     NavigationDrawerItem(
@@ -23,6 +25,16 @@ val menuItems = listOf(
             route = "home",
             content = { navController: NavHostController -> HomeScreen(navController, hiltViewModel()) }
         )
+    ),
+    NavigationDrawerItem(
+        title = "Map",
+        selectedIcon = Icons.Outlined.Map,
+        unselectedIcon = Icons.Outlined.Map,
+        navigationItem = NavigationItem(
+            route = "map",
+            content = { navController: NavHostController -> MapScreen(navController) }
+        ),
+        displayBottomBar = false
     ),
     NavigationDrawerItem(
         title = "Itinerary",

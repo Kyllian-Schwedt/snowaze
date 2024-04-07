@@ -107,12 +107,3 @@ fun HomeScreen(
         }
     }
 }
-
-val skiLift = SkiLift(
-    name = "Ski Lift 1",
-    type = SkiLiftType.CHAIRLIFT,
-    status = Status.OPEN,
-    hop = emptyList(),
-    comments = emptyList(),
-    id = UUID.randomUUID()
-)

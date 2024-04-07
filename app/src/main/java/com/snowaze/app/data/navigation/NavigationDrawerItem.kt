@@ -13,6 +13,7 @@ data class NavigationDrawerItem(
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
     val badgeCount: Int? = null,
-    val navigationItem: NavigationItem
+    val navigationItem: NavigationItem,
+    val displayBottomBar: Boolean = true
     )
 
