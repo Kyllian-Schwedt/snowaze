@@ -20,6 +20,7 @@ import kotlinx.coroutines.tasks.await
 
 class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth, private val store: FirebaseFirestore) : AccountService {
 
+    private val userDetailCache = mutableMapOf<String, UserDetail?>()
     override val currentUserId: String
         get() = auth.currentUser?.uid.orEmpty()
 
@@ -163,7 +164,9 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth, pri
     }
 
     override suspend fun getAccountInfoById(id: String): UserDetail? {
-        return store.collection("users").document(id).get().await().toObject(UserDetail::class.java)
+        return userDetailCache.getOrPut(id) {
+            store.collection("users").document(id).get().await().toObject(UserDetail::class.java)
+        }
     }
 
     override suspend fun getAccountsInfoByIds(ids: List<String>): List<UserDetail> {

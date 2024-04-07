@@ -3,6 +3,7 @@ package com.snowaze.app.model
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.snowaze.app.screens.map.ImageMarker
 import java.util.UUID
 import java.util.Date
@@ -11,7 +12,8 @@ interface IPath {
     var id: UUID;
     var name: String;
     var hop: List<IPath>;
-    var comments: List<Comment>;
+    var hopIds: List<UUID>;
+    var comments: SnapshotStateList<Comment>;
     var x: Int;
     var y: Int;
 }
@@ -20,11 +22,11 @@ class Track (
     override var id: UUID,
     override var name: String,
     override var hop: List<IPath>,
-    override var comments: List<Comment>,
+    override var comments: SnapshotStateList<Comment>,
     var section: Int,
     val difficulty: Difficulty,
     var status: MutableState<Status>,
-    var hopIds: List<UUID>,
+    override var hopIds: List<UUID>,
     override var x: Int,
     override var y: Int,
     var marker: ImageMarker? = null
@@ -53,10 +55,10 @@ class SkiLift(
     override var id: UUID,
     override var name: String,
     override var hop: List<IPath>,
-    override var comments: List<Comment>,
+    override var comments: SnapshotStateList<Comment>,
     var type: SkiLiftType,
     var status: Status,
-    var hopIds: List<UUID>,
+    override var hopIds: List<UUID>,
     override var x: Int,
     override var y: Int,
     var marker: ImageMarker? = null

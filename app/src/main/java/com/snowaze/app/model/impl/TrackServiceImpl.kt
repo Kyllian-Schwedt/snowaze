@@ -60,9 +60,12 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                     for (skiLift in this.skiLifts) {
                         skiLift.hop = paths.filter { it.id.toString() in value.skiLifts[skiLift.id.toString()]!!.hop }
                     }
-                    ref.child("tracks").addChildEventListener(TrackListener(this.tracks, this._markers))
+                    ref.child("tracks").addChildEventListener(TrackListener(this.tracks, this._markers
+                    ) { this.fetchAllHops() })
 
-                    ref.child("skiLifts").addChildEventListener(SkiLiftListener(this.skiLifts, this._markers))
+                    ref.child("skiLifts").addChildEventListener(SkiLiftListener(this.skiLifts, this._markers){
+                        this.fetchAllHops()
+                    })
                     ref.child("chatMessages").addChildEventListener(ChatMessagesListener(this.chatMessages))
 
                     tracks.forEach { track ->
@@ -171,7 +174,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
         return paths
     }
 
-    class SkiLiftListener(private val skiLifts: SnapshotStateList<SkiLift>, private val markers: MutableStateFlow<List<ImageMarker>>) : ChildEventListener, CommentsHashMapToList() {
+    class SkiLiftListener(private val skiLifts: SnapshotStateList<SkiLift>, private val markers: MutableStateFlow<List<ImageMarker>>, private val callback: () -> Unit) : ChildEventListener, CommentsHashMapToList() {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             Log.d("FirebaseService", "SkiLift ${snapshot.key} added")
@@ -200,6 +203,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                     Log.d("FirebaseService", "SkiLift ${snapshot.key} added")
                     markers.value += ImageMarker(skiLiftJSON.x, skiLiftJSON.y, mutableStateOf(skiLifts.last()))
                 }
+                callback()
             }
             catch (e: Exception) {
                 Log.e("FirebaseService", "Error onChildAdded", e)
@@ -255,7 +259,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
         }
     }
 
-    class TrackListener(private val tracks: SnapshotStateList<Track>, private val markers: MutableStateFlow<List<ImageMarker>>) : ChildEventListener,
+    class TrackListener(private val tracks: SnapshotStateList<Track>, private val markers: MutableStateFlow<List<ImageMarker>>, private val callback: () -> Unit) : ChildEventListener,
         CommentsHashMapToList() {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
@@ -284,6 +288,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                     )
                     Log.d("FirebaseService", "Track ${snapshot.key} added")
                     markers.value += ImageMarker(trackJSON.x, trackJSON.y, mutableStateOf(tracks.last()))
+                    callback()
                 }
             }
             catch (e: Exception) {
@@ -382,11 +387,18 @@ class TrackServiceImpl @Inject constructor(): TrackService {
             Log.e("FirebaseService", "Error onChildAdded", error.toException())
         }
     }
+
+    private fun fetchAllHops() {
+        val allPath = this.tracks + this.skiLifts
+        for (path in allPath) {
+            path.hop = allPath.filter { it.id in path.hopIds }
+        }
+    }
 }
 
 abstract class CommentsHashMapToList {
-    public fun commentsHashMapToList(comments: HashMap<String, CommentJSON>): List<Comment> {
-        val list = mutableListOf<Comment>()
+    public fun commentsHashMapToList(comments: HashMap<String, CommentJSON>): SnapshotStateList<Comment> {
+        val list = SnapshotStateList<Comment>()
         for (comment in comments) {
             list.add(Comment(comment.key, comment.value))
         }

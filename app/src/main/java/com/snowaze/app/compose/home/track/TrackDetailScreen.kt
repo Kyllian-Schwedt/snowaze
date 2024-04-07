@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -39,10 +41,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.snowaze.app.common.utils.comment.CommentItem
 import com.snowaze.app.model.AccountService
 import com.snowaze.app.model.Comment
 import com.snowaze.app.model.Difficulty
 import com.snowaze.app.model.Status
+import com.snowaze.app.model.Track
 import com.snowaze.app.model.TrackService
 import com.snowaze.app.ui.theme.md_theme_light_outline
 import com.snowaze.app.ui.theme.md_theme_light_primary
@@ -62,6 +66,7 @@ fun TrackDetailScreen(
     val accountId = accountService.currentUserId
     var newCommentText by rememberSaveable { mutableStateOf("") }
     val comments = track?.comments ?: emptyList()
+
 
     if (track != null) {
         Column(
@@ -136,7 +141,6 @@ fun TrackDetailScreen(
                 ) {
                     Box(
                         modifier = Modifier
-                            .border(1.dp, Color.Black)
                             .fillMaxWidth()
                     ) {
                         Text(
@@ -144,27 +148,27 @@ fun TrackDetailScreen(
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
-                                .padding(16.dp)
+                                .padding(start = 8.dp, top = 16.dp, bottom = 16.dp)
                         )
                     }
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp)
-                            .heightIn(min = 100.dp, max = 110.dp)
+                            .heightIn(min = 100.dp, max = 160.dp)
+                            .padding(start = 16.dp, end = 16.dp)
                     ) {
                         if (comments.isEmpty()) {
                             item {
                                 Text(
-                                    text = "Aucun commentaire pour le moment",
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Light
+                                    text = "Aucun commentaire",
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(bottom = 15.dp)
                                 )
                             }
-                        }
-                        comments.forEach { comment ->
-                            item {
-                                CommentRow(comment)
+                        } else {
+                            itemsIndexed(comments) { index, comment ->
+                                CommentItem(comment, authService = viewModel.accountService)
                             }
                         }
                     }
