@@ -136,7 +136,7 @@ fun IconChip(
     difficulty: Difficulty
 ) {
     Surface(
-        color = Color.LightGray,
+        color = MaterialTheme.colorScheme.surfaceVariant,
         shape = RoundedCornerShape(32.dp),
         modifier = modifier
     ) {

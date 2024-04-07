@@ -80,7 +80,9 @@ fun OnBoardingScreenContent(
             Pager(
                 state = pagerState,
                 orientation = Orientation.Horizontal,
-                modifier = Modifier.fillMaxSize().padding(bottom = 100.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 100.dp),
                 canProceed = canAccessNextPage
             ) {
                 OnboardingPagerItem(onboardingList[commingPage], uiState, onFirstNameChange, onLastNameChange, onPseudoChange, onSkillChange)
@@ -112,7 +114,9 @@ fun OnBoardingScreenContent(
                     .clip(CircleShape)
             ) {
                 if (uiState.isLoading) {
-                    HorizontalDottedProgressBar(modifier = Modifier.padding(horizontal = 16.dp).height(60.dp))
+                    HorizontalDottedProgressBar(modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .height(60.dp))
                 } else {
                     Text(
                         text = if (pagerState.currentPage == onboardingList.size - 1) "Let's Begin" else "Next",
@@ -174,7 +178,9 @@ fun OnboardingPagerItem(item: OnboardingViewModel.Onboard, uiState: OnboardingUi
                 hasError = uiState.hasErrorPseudo
             )
         } else if(item.page == OnboardingViewModel.OnboardingStep.SKILLS) {
-            ExposedDropdownMenu(options = listOf(Difficulty.BLACK.name, Difficulty.RED.name, Difficulty.BLUE.name, Difficulty.GREEN.name), label = null, onValueChange = {  })
+                ExposedDropdownMenu(options = listOf(Difficulty.BLACK.name, Difficulty.RED.name, Difficulty.BLUE.name, Difficulty.GREEN.name), label = null, onValueChange = {
+                    onSkillChange(it)
+                })
         }
     }
 }

@@ -99,13 +99,14 @@ fun SkiLiftCard(skiLift: SkiLift, navController: NavHostController) {
                             SkiLiftType.TBAR -> ImageVector.vectorResource(id = R.drawable.noun_ski_lift_8803__1_)
                         },
                         contentDescription = "Ski Lift Icon",
-                        tint = Color.Black,
+                        tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(64.dp).padding(end = 32.dp)
                     )
                     Text(
                         text = skiLift.name,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
                 }
