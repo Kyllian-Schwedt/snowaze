@@ -159,4 +159,12 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth, pri
     companion object {
         private const val LINK_ACCOUNT_TRACE = "linkAccount"
     }
+
+    override suspend fun getAccountInfoById(id: String): UserDetail? {
+        return store.collection("users").document(id).get().await().toObject(UserDetail::class.java)
+    }
+
+    override suspend fun getAccountsInfoByIds(ids: List<String>): List<UserDetail> {
+        return store.collection("users").whereIn("id", ids).get().await().toObjects(UserDetail::class.java)
+    }
 }

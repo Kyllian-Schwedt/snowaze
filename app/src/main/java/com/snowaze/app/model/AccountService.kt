@@ -24,4 +24,7 @@ interface AccountService {
     suspend fun getUserData(): UserDetail?
     suspend fun googleSignIn(idToken: String)
     fun getGso(): GoogleSignInOptions
+
+    suspend fun getAccountInfoById(id: String): UserDetail?
+    suspend fun getAccountsInfoByIds(ids: List<String>): List<UserDetail>
 }
