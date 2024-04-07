@@ -110,4 +110,7 @@ dependencies {
     implementation("com.github.Gurupreet:FontAwesomeCompose:1.0.0")
     implementation("androidx.compose.material:material-icons-extended")
 
+    implementation("me.saket.telephoto:zoomable-image-coil:0.9.0")
+
+
 }
