@@ -9,9 +9,11 @@ data class TrackJSON(
     var comments: HashMap<String, CommentJSON>,
     val difficulty: String,
     val status: String,
-    val hop: List<String>
+    val hop: List<String>,
+    val x: Int,
+    val y: Int
 ) {
-    constructor() : this("", "", 0, hashMapOf(), "", "", listOf())
+    constructor() : this("", "", 0, hashMapOf(), "", "", listOf(), 0, 0)
 }
 
 data class SkiLiftJSON(
@@ -20,9 +22,11 @@ data class SkiLiftJSON(
     val comments: HashMap<String, CommentJSON>,
     val type: String,
     val status: String,
-    val hop: List<String>
+    val hop: List<String>,
+    val x: Int,
+    val y: Int
 ) {
-    constructor() : this("", "", hashMapOf(), "", "", listOf())
+    constructor() : this("", "", hashMapOf(), "", "", listOf(), 0, 0)
 }
 
 data class CommentJSON(

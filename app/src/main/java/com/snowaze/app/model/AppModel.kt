@@ -3,6 +3,7 @@ package com.snowaze.app.model
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.MutableState
+import com.snowaze.app.screens.map.ImageMarker
 import java.util.UUID
 import java.util.Date
 
@@ -11,6 +12,8 @@ interface IPath {
     var name: String;
     var hop: List<IPath>;
     var comments: List<Comment>;
+    var x: Int;
+    var y: Int;
 }
 
 class Track (
@@ -20,7 +23,10 @@ class Track (
     override var comments: List<Comment>,
     var section: Int,
     val difficulty: Difficulty,
-    var status: MutableState<Status>
+    var status: MutableState<Status>,
+    override var x: Int,
+    override var y: Int,
+    var marker: ImageMarker? = null
 ) : IPath {
     public fun toJSON(): TrackJSON {
         val hop : List<String> = if (this.hop.isEmpty()) {
@@ -35,7 +41,9 @@ class Track (
             comments = this.comments.associate { it.id.toString() to it.toJson() } as HashMap<String, CommentJSON>,
             difficulty = this.difficulty.toString(),
             status = this.status.toString(),
-            hop = hop
+            hop = hop,
+            x = marker?.x ?: 0,
+            y = marker?.y ?: 0
         )
     }
 }
@@ -47,6 +55,9 @@ class SkiLift(
     override var comments: List<Comment>,
     var type: SkiLiftType,
     var status: Status,
+    override var x: Int,
+    override var y: Int,
+    var marker: ImageMarker? = null
 ) : IPath {
     public fun toJSON(): SkiLiftJSON {
         val hop : List<String> = if (this.hop.isEmpty()) {
@@ -60,7 +71,9 @@ class SkiLift(
             comments = this.comments.associate { it.id.toString() to it.toJson() } as HashMap<String, CommentJSON>,
             type = this.type.toString(),
             status = this.status.toString(),
-            hop = hop
+            hop = hop,
+            x = marker?.x ?: 0,
+            y = marker?.y ?: 0
         )
     }
 }
