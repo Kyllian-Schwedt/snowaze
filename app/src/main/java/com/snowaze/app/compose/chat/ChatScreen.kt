@@ -22,8 +22,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -36,6 +39,7 @@ import androidx.navigation.NavController
 import com.snowaze.app.model.TrackService
 import com.snowaze.app.ui.theme.md_theme_light_outline
 import com.snowaze.app.ui.theme.md_theme_light_primary
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
 @Composable
@@ -84,9 +88,18 @@ fun ChatScreen(
                     horizontalArrangement = if (chatMessage.authorId == accountId) Arrangement.End else Arrangement.Start
                 ) {
                     Column {
+                        val coroutineScope = rememberCoroutineScope()
+                        val profileName = remember { mutableStateOf("") }
+
+                        LaunchedEffect(chatMessage.authorId) {
+                            coroutineScope.launch {
+                                val userData = viewModel.accountService.getAccountInfoById(chatMessage.authorId)
+                                profileName.value = userData?.pseudo.orEmpty()
+                            }
+                        }
                         if ((index > 0 && chatMessages[index - 1].authorId != chatMessage.authorId) || (index == 0))
                             Text(
-                                text = (chatMessage.authorId),
+                                text = (profileName.value),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier
                                     .padding(
