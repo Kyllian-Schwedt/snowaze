@@ -111,8 +111,8 @@ fun SkiLiftCard(skiLift: SkiLift, navController: NavHostController) {
                     )
                 }
                 Text(
-                    text = skiLift.status.toString(),
-                    color = when (skiLift.status) {
+                    text = skiLift.status.value.toString(),
+                    color = when (skiLift.status.value) {
                         Status.OPEN -> Color.Green
                         Status.CLOSED -> Color.Red
                         Status.UNKNOWN -> Color.Black

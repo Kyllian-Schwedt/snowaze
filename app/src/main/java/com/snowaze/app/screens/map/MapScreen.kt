@@ -196,7 +196,7 @@ fun Marker(
                         }
                     }
                     is SkiLift -> it.status.let {
-                        when (it) {
+                        when (it.value) {
                             Status.OPEN -> Color.Green
                             Status.CLOSED -> Color.Red
                             Status.UNKNOWN -> Color.DarkGray
@@ -245,7 +245,7 @@ fun Marker(
                     },
                     contentDescription = "Ski Lift Icon",
                     tint = skiLift.status.let {
-                        when (it) {
+                        when (it.value) {
                             Status.OPEN -> Color.Green
                             Status.CLOSED -> Color.Red
                             Status.UNKNOWN -> Color.Black
@@ -354,8 +354,8 @@ fun SkiLiftDetailContent(skiLift: SkiLift) {
     )
 }
         Text(
-            text = skiLift.status.toString(),
-            color = when (skiLift.status) {
+            text = skiLift.status.value.toString(),
+            color = when (skiLift.status.value) {
                 Status.OPEN -> Color.Green
                 Status.CLOSED -> Color.Red
                 Status.UNKNOWN -> Color.Black

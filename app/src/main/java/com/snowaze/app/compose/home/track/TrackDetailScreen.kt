@@ -24,6 +24,7 @@ import androidx.compose.material.icons.outlined.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -35,12 +36,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.snowaze.app.R
+import com.snowaze.app.common.utils.button.FabItem
+import com.snowaze.app.common.utils.button.MultiFloatingActionButton
 import com.snowaze.app.common.utils.comment.CommentItem
 import com.snowaze.app.model.AccountService
 import com.snowaze.app.model.Comment
@@ -175,7 +180,6 @@ fun TrackDetailScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, Color.Black)
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -205,6 +209,46 @@ fun TrackDetailScreen(
                 }
             }
         }
+
+        val fabItem: MutableList<FabItem> = mutableListOf(/*
+            FabItem(
+                icon = painterResource(id = R.drawable.ice_cubes),
+                label = "Icy ski slope",
+                {}),
+            FabItem(
+                icon = painterResource(id = R.drawable.snowman),
+                label = "Melted snow",
+                {}),
+            FabItem(
+                icon = painterResource(id = R.drawable.traffic),
+                label = "Heavy traffic",
+                {}),*/
+        )
+
+        if(track.status.value != Status.CLOSED) {
+            fabItem.add(
+                FabItem(
+                    icon = painterResource(id = R.drawable.closed),
+                    label = ""
+                ) {
+                    trackService.updateTrackStatus(track.id, Status.CLOSED)
+                }
+            )
+        } else {
+            fabItem.add(
+                FabItem(
+                    icon = painterResource(id = R.drawable.open_sign),
+                    label = ""
+                ) {
+                    trackService.updateTrackStatus(track.id, Status.OPEN)
+                }
+            )
+        }
+
+        MultiFloatingActionButton(
+            fabIcon = painterResource(id = R.drawable.warning),
+            items = fabItem,
+        )
     }
 }
 

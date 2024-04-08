@@ -164,7 +164,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
         // Remove the path that are too difficult
         paths = paths.filter { it.all { it is Track && it.difficulty <= maxDifficulty || it is SkiLift } }.toMutableList()
         // Remove the path that are closed
-        paths = paths.filter { it.all { it is Track && it.status.value == Status.OPEN || it is SkiLift && it.status == Status.OPEN } }.toMutableList()
+        paths = paths.filter { it.all { it is Track && it.status.value == Status.OPEN || it is SkiLift && it.status.value == Status.OPEN } }.toMutableList()
         // Take the 5 shortest path
         paths.sortBy { it.size }
         if (paths.size > 5) {
@@ -190,9 +190,9 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                             name = skiLiftJSON.name,
                             comments = commentsHashMapToList(skiLiftJSON.comments),
                             type = SkiLiftType.valueOf(skiLiftJSON.type),
-                            status = try { Status.valueOf(skiLiftJSON.status) } catch (e: Exception) {
+                            status = try { mutableStateOf(Status.valueOf(skiLiftJSON.status)) } catch (e: Exception) {
                                 Log.e("FirebaseService", "Error parsing Status", e)
-                                Status.UNKNOWN
+                                mutableStateOf(Status.UNKNOWN)
                             },
                             hop = mutableListOf(),
                             x = skiLiftJSON.x,
@@ -221,9 +221,9 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                     val skiLift = skiLifts.find { it.id == UUID.fromString(skiLiftJSON.id) }
                     if (skiLift != null) {
                         try {
-                            skiLift.status = Status.valueOf(skiLiftJSON.status)
+                            skiLift.status.value = Status.valueOf(skiLiftJSON.status)
                         } catch (e: Exception) {
-                            skiLift.status = Status.UNKNOWN
+                            skiLift.status.value = Status.UNKNOWN
                             Log.e("FirebaseService", "Error parsing Status", e)
                         }
                         skiLift.comments = commentsHashMapToList(skiLiftJSON.comments)

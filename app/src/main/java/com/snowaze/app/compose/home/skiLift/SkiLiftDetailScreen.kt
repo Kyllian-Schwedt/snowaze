@@ -3,7 +3,6 @@ package com.snowaze.app.compose.home.skiLift
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -51,6 +51,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.snowaze.app.R
+import com.snowaze.app.common.utils.button.FabItem
+import com.snowaze.app.common.utils.button.MultiFloatingActionButton
 import com.snowaze.app.common.utils.comment.CommentItem
 import com.snowaze.app.compose.home.track.TrackCard
 import com.snowaze.app.model.AccountService
@@ -143,8 +145,8 @@ fun SkiLiftDetailScreen(
                     }
                 }
                 Text(
-                    text = "${skiLift.status}",
-                    color = when (skiLift.status) {
+                    text = "${skiLift.status.value}",
+                    color = when (skiLift.status.value) {
                         Status.OPEN -> Color.Green
                         Status.CLOSED -> Color.Red
                         else -> Color.Black
@@ -278,6 +280,45 @@ fun SkiLiftDetailScreen(
                 }
             }
             }
+            val fabItem: MutableList<FabItem> = mutableListOf(/*
+            FabItem(
+                icon = painterResource(id = R.drawable.ice_cubes),
+                label = "Icy ski slope",
+                {}),
+            FabItem(
+                icon = painterResource(id = R.drawable.snowman),
+                label = "Melted snow",
+                {}),
+            FabItem(
+                icon = painterResource(id = R.drawable.traffic),
+                label = "Heavy traffic",
+                {}),*/
+            )
+
+            if(skiLift.status.value != Status.CLOSED) {
+                fabItem.add(
+                    FabItem(
+                        icon = painterResource(id = R.drawable.closed),
+                        label = ""
+                    ) {
+                        trackService.updateSkiLiftStatus(skiLift.id, Status.CLOSED)
+                    }
+                )
+            } else {
+                fabItem.add(
+                    FabItem(
+                        icon = painterResource(id = R.drawable.open_sign),
+                        label = ""
+                    ) {
+                        trackService.updateSkiLiftStatus(skiLift.id, Status.OPEN)
+                    }
+                )
+            }
+
+            MultiFloatingActionButton(
+                fabIcon = painterResource(id = R.drawable.warning),
+                items = fabItem,
+            )
         }
     }
 }

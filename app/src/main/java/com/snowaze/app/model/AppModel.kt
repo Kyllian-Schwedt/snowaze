@@ -57,7 +57,7 @@ class SkiLift(
     override var hop: List<IPath>,
     override var comments: SnapshotStateList<Comment>,
     var type: SkiLiftType,
-    var status: Status,
+    var status: MutableState<Status>,
     override var hopIds: List<UUID>,
     override var x: Int,
     override var y: Int,
