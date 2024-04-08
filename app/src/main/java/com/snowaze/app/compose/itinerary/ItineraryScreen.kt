@@ -1,6 +1,8 @@
 package com.snowaze.app.compose.itinerary
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,11 +10,15 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DockedSearchBar
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,25 +45,99 @@ fun ItineraryScreen(
         verticalArrangement = Arrangement.Top
     ) {
         Box {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
 
-                ) {
-                    SearchScreen(viewModel = viewModel)
-                }
+            ) {
+                SearchBar1(viewModel = viewModel)
+                SearchBar2(viewModel = viewModel)
+            }
         }
-    }
+        LazyColumn {
+            if (viewModel.isBothLocked()) {
+                item {
+                    val path1 = viewModel.fullList.find { it.name == viewModel.searchQuery }
+                    val path2 = viewModel.fullList.find { it.name == viewModel.searchQuery2 }
+                    if (path1 != null && path2 != null) {
+                        val fullPathList = viewModel.trackService.getPath(path1.id, path2.id)
+                        if (fullPathList.isNotEmpty()) {
+                            fullPathList.forEach {
+                                PathCard(it)
+                            }
+                        }
+                    } else {
+                        Text(text = "Paths not found")
+                    }
+                }
+            } else {
+                item {
+                    Text(text = "Select a path")
+                }
+            }
+        }
 
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun PathCard(paths: List<IPath>) {
+    ElevatedCard(
+        modifier = Modifier
+            .combinedClickable(
+                enabled = true,
+                onClick = {
+                    /*TODO*/
+                },
+                onLongClick = {
+                    /*TODO*/
+                }
+            )
+            .fillMaxWidth()
+            .heightIn(min = 100.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+            ) {
+                Text(
+                    modifier = Modifier.padding(bottom = 15.dp),
+                    text = "${paths.first().name} - ${paths.size - 1} hops - ${paths.last().name}",
+                    style = MaterialTheme.typography.titleSmall
+                )
+                //afficher la liste des hops
+                paths.forEachIndexed { index, path ->
+                    if (index != 0 && index != paths.size - 1) {
+                        Text(
+                            text = path.name,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+            }
+        }
+
+
+    }
 }
 
 @Composable
-fun SearchScreen(viewModel: ItineraryViewModel) {
+fun SearchBar1(viewModel: ItineraryViewModel) {
 
     val searchResults by viewModel.searchResults.collectAsStateWithLifecycle()
 
-    SearchScreen(
+    SearchBar1(
         searchQuery = viewModel.searchQuery,
         searchResults = searchResults,
         onSearchQueryChange = { viewModel.onSearchQueryChange(it) },
@@ -68,10 +148,10 @@ fun SearchScreen(viewModel: ItineraryViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(
+fun SearchBar1(
     searchQuery: String,
     searchResults: List<IPath>,
-    isSearchActive : Boolean,
+    isSearchActive: Boolean,
     viewModel: ItineraryViewModel,
     onSearchQueryChange: (String) -> Unit
 ) {
@@ -111,7 +191,7 @@ fun SearchScreen(
                         key = { index -> searchResults[index].id },
                         itemContent = { index ->
                             val path = searchResults[index]
-                            PathListItem(path = path, viewModel = viewModel)
+                            PathListItem1(path = path, viewModel = viewModel)
                         }
                     )
                 }
@@ -127,7 +207,7 @@ fun SearchScreen(
 
 
 @Composable
-fun PathListItem(
+fun PathListItem1(
     path: IPath,
     modifier: Modifier = Modifier,
     viewModel: ItineraryViewModel
@@ -139,6 +219,7 @@ fun PathListItem(
             .clickable {
                 viewModel.onSearchQueryChange(path.name)
                 viewModel.onSearchActiveChange(false)
+                viewModel.onLock1(true)
             }
     ) {
         Text(text = path.name)
@@ -165,3 +246,97 @@ fun PathListEmptyState(
     }
 }
 
+
+@Composable
+fun SearchBar2(viewModel: ItineraryViewModel) {
+
+    val searchResults by viewModel.searchResults2.collectAsStateWithLifecycle()
+
+    SearchBar2(
+        searchQuery = viewModel.searchQuery2,
+        searchResults = searchResults,
+        onSearchQueryChange = { viewModel.onSearchQueryChange2(it) },
+        isSearchActive = viewModel.isSearchActive2,
+        viewModel = viewModel
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchBar2(
+    searchQuery: String,
+    searchResults: List<IPath>,
+    isSearchActive: Boolean,
+    viewModel: ItineraryViewModel,
+    onSearchQueryChange: (String) -> Unit
+) {
+
+    DockedSearchBar(
+        query = searchQuery,
+        onQueryChange = onSearchQueryChange,
+        onSearch = { /* Handle search */ },
+        placeholder = { Text(text = "Search") },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Search,
+                tint = MaterialTheme.colorScheme.onSurface,
+                contentDescription = null
+            )
+        },
+        trailingIcon = {
+            if (searchQuery.isNotEmpty() && isSearchActive) {
+                IconButton(onClick = { onSearchQueryChange("") }) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        contentDescription = "Clear search"
+                    )
+                }
+            }
+        },
+        content = {
+            if (isSearchActive && searchResults.isNotEmpty()) {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(32.dp),
+                    contentPadding = PaddingValues(16.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(
+                        count = searchResults.size,
+                        key = { index -> searchResults[index].id },
+                        itemContent = { index ->
+                            val path = searchResults[index]
+                            PathListItem2(path = path, viewModel = viewModel)
+                        }
+                    )
+                }
+            } else if (isSearchActive && searchResults.isEmpty()) {
+                PathListEmptyState()
+            }
+        },
+        active = isSearchActive,
+        onActiveChange = { viewModel.onSearchActiveChange2(it) },
+        tonalElevation = 0.dp
+    )
+}
+
+
+@Composable
+fun PathListItem2(
+    path: IPath,
+    modifier: Modifier = Modifier,
+    viewModel: ItineraryViewModel
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable {
+                viewModel.onSearchQueryChange2(path.name)
+                viewModel.onSearchActiveChange2(false)
+                viewModel.onLock2(true)
+            }
+    ) {
+        Text(text = path.name)
+    }
+}
