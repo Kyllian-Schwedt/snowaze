@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -61,7 +63,11 @@ fun ItineraryScreen(
                 SearchBar2(viewModel = viewModel)
             }
         }
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+        ) {
             if (viewModel.isBothLocked()) {
                 item {
                     val path1 = viewModel.fullList.find { it.name == viewModel.searchQuery }
@@ -70,6 +76,7 @@ fun ItineraryScreen(
                         val fullPathList = viewModel.trackService.getPath(path1.id, path2.id)
                         if (fullPathList.isNotEmpty()) {
                             fullPathList.forEach {
+                                Spacer(modifier = Modifier.height(16.dp))
                                 PathCard(it)
                             }
                         }
