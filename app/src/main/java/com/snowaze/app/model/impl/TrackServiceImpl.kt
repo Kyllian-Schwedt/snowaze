@@ -390,6 +390,7 @@ abstract class CommentsHashMapToList {
         for (comment in comments) {
             list.add(Comment(comment.key, comment.value))
         }
+        list.sortBy { it.date }
         return list
     }
 }
