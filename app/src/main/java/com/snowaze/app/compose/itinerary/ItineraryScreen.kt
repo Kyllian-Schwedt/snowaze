@@ -13,7 +13,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CardDefaults
@@ -26,6 +29,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -84,12 +90,15 @@ fun ItineraryScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PathCard(paths: List<IPath>) {
+
+    var isCardDeployed by remember { mutableStateOf(false) }
+
     ElevatedCard(
         modifier = Modifier
             .combinedClickable(
                 enabled = true,
                 onClick = {
-                    /*TODO*/
+                    isCardDeployed = !isCardDeployed
                 },
                 onLongClick = {
                     /*TODO*/
@@ -99,7 +108,8 @@ fun PathCard(paths: List<IPath>) {
             .heightIn(min = 100.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
-        )
+        ),
+        shape = RoundedCornerShape(10.dp) // Ajoutez cette ligne pour arrondir les coins
     ) {
         Row(
             modifier = Modifier
@@ -113,22 +123,24 @@ fun PathCard(paths: List<IPath>) {
             ) {
                 Text(
                     modifier = Modifier.padding(bottom = 15.dp),
-                    text = "${paths.first().name} - ${paths.size - 1} hops - ${paths.last().name}",
-                    style = MaterialTheme.typography.titleSmall
+                    text = "${paths[0].name} > ${paths.size - 2} hops > ${paths[paths.size - 1].name}",
                 )
-                //afficher la liste des hops
-                paths.forEachIndexed { index, path ->
-                    if (index != 0 && index != paths.size - 1) {
+                if (isCardDeployed) {
+                    paths.forEach {
                         Text(
-                            text = path.name,
-                            style = MaterialTheme.typography.bodyLarge
+                            modifier = Modifier.padding(bottom = 15.dp),
+                            text = it.name,
                         )
                     }
                 }
             }
+            IconButton(onClick = { isCardDeployed = !isCardDeployed }) { // Ajoutez ce bouton pour la flèche
+                Icon(
+                    imageVector = if (isCardDeployed) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
+                    contentDescription = null
+                )
+            }
         }
-
-
     }
 }
 
