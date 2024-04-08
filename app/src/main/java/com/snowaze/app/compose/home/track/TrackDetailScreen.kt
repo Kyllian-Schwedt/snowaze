@@ -74,7 +74,6 @@ fun TrackDetailScreen(
     val accountService: AccountService = viewModel.accountService
     val accountId = accountService.currentUserId
     var newCommentText by rememberSaveable { mutableStateOf("") }
-    val comments = track?.comments ?: emptyList()
 
 
     if (track != null) {
@@ -167,7 +166,7 @@ fun TrackDetailScreen(
                             .heightIn(min = 100.dp, max = 160.dp)
                             .padding(start = 16.dp, end = 16.dp)
                     ) {
-                        if (comments.isEmpty()) {
+                        if (track.comments.value.isEmpty()) {
                             item {
                                 Text(
                                     text = "Aucun commentaire",
@@ -177,7 +176,7 @@ fun TrackDetailScreen(
                                 )
                             }
                         } else {
-                            itemsIndexed(comments) { index, comment ->
+                            itemsIndexed(track.comments.value) { index, comment ->
                                 CommentItem(comment, authService = viewModel.accountService)
                             }
                         }
