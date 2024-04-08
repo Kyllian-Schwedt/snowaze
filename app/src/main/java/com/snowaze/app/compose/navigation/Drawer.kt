@@ -50,6 +50,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.snowaze.app.R
+import com.snowaze.app.SnoWazeAppState
 import com.snowaze.app.compose.home.skiLift.SkiLiftDetailScreen
 import com.snowaze.app.compose.home.track.TrackDetailScreen
 import com.snowaze.app.data.navigation.NavigationDrawerItem
@@ -61,7 +62,7 @@ import java.util.UUID
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("ResourceAsColor")
 @Composable
-fun DrawerContent(menuItems: List<NavigationDrawerItem>) {
+fun DrawerContent(menuItems: List<NavigationDrawerItem>, appState: SnoWazeAppState) {
     AppTheme {
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
@@ -133,7 +134,8 @@ fun DrawerContent(menuItems: List<NavigationDrawerItem>) {
                     scope = scope,
                     drawerState = drawerState,
                     navController = navController,
-                    isDisplayDrawer = isDisplayDrawer
+                    isDisplayDrawer = isDisplayDrawer,
+                    appState = appState
                 )
             }
         } else {
@@ -142,7 +144,8 @@ fun DrawerContent(menuItems: List<NavigationDrawerItem>) {
                 scope = scope,
                 drawerState = drawerState,
                 navController = navController,
-                isDisplayDrawer = isDisplayDrawer
+                isDisplayDrawer = isDisplayDrawer,
+                appState = appState
             )
         }
     }
@@ -157,7 +160,8 @@ fun PageContent(
     scope: CoroutineScope,
     drawerState: DrawerState,
     navController: NavHostController,
-    isDisplayDrawer: MutableState<Boolean>
+    isDisplayDrawer: MutableState<Boolean>,
+    appState: SnoWazeAppState
 ){
     Scaffold(
         topBar = {
@@ -241,6 +245,7 @@ fun PageContent(
             menuItems = menuItems,
             paddingValues = innerPadding,
             navController = navController,
+            appState = appState
         )
     }
 }
@@ -251,6 +256,7 @@ fun ScreenContent(
     menuItems: List<NavigationDrawerItem>,
     paddingValues: PaddingValues,
     navController: NavHostController,
+    appState: SnoWazeAppState
 ) {
     Box(
         modifier = Modifier.padding(paddingValues)
@@ -261,7 +267,7 @@ fun ScreenContent(
         ) {
             menuItems.forEach { item ->
                 composable(item.navigationItem.route) {
-                    item.navigationItem.content(navController)
+                    item.navigationItem.content(navController, appState)
                 }
             }
             composable("track/{id}") { backStackEntry ->

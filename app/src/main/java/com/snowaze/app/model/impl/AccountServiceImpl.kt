@@ -61,28 +61,7 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth, pri
         }
 
     override suspend fun authenticate(email: String, password: String) {
-        try {
             auth.signInWithEmailAndPassword(email, password).await()
-        } catch (e: FirebaseAuthException) {
-            // Handle the exception
-            when (e.errorCode) {
-                "ERROR_INVALID_EMAIL" -> {
-                    // Handle invalid email
-                }
-
-                "ERROR_WRONG_PASSWORD" -> {
-                    // Handle wrong password
-                }
-
-                "ERROR_USER_NOT_FOUND" -> {
-                    // Handle user not found
-                }
-
-                else -> {
-                    // Handle other errors
-                }
-            }
-        }
     }
 
     override suspend fun sendRecoveryEmail(email: String) {
@@ -171,5 +150,9 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth, pri
 
     override suspend fun getAccountsInfoByIds(ids: List<String>): List<UserDetail> {
         return store.collection("users").whereIn("id", ids).get().await().toObjects(UserDetail::class.java)
+    }
+
+    override fun disconnect() {
+        auth.signOut()
     }
 }

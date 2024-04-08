@@ -1,6 +1,7 @@
 package com.snowaze.app.screens.settings
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +13,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Divider
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,9 +30,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.firebase.database.OnDisconnect
 import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIconType
 import com.guru.fontawesomecomposelib.FaIcons
+import com.snowaze.app.SnoWazeAppState
 import com.snowaze.app.compose.BasicField
 import com.snowaze.app.compose.ExposedDropdownMenu
 import com.snowaze.app.compose.lottie.LottieLoadingView
@@ -39,9 +43,11 @@ import com.snowaze.app.model.Difficulty
 
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsViewModel = hiltViewModel()
+    viewModel: SettingsViewModel = hiltViewModel(),
+    appState: SnoWazeAppState
 ) {
     val uiState by viewModel.uiState
+    viewModel.appState = appState
 
     SettingsScreenContent(
         onFirstNameChange = viewModel::onFirstNameChange,
@@ -49,6 +55,7 @@ fun SettingsScreen(
         onPseudoChange = viewModel::onPseudoChange,
         onSkillChange = viewModel::onSkillChange,
         onProfileSubmit = viewModel::onProfileSubmit,
+        disconnect = viewModel::disconnect,
         uiState = uiState
     )
 
@@ -61,6 +68,7 @@ fun SettingsScreenContent(
     onPseudoChange: (String) -> Unit,
     onSkillChange: (String) -> Unit,
     onProfileSubmit: () -> Unit,
+    disconnect: () -> Unit,
     uiState: SettingsUiState
 ) {
     Scaffold { paddingValues ->
@@ -116,6 +124,42 @@ fun SettingsScreenContent(
                                         color = Color.White
                                     )
                                 }
+                            }
+                        }
+                    }
+                }
+
+                item {
+                    Divider(
+                        modifier = Modifier.padding(vertical = 32.dp)
+                    )
+
+                    Box(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)) {
+                        Button(
+                            onClick = {
+                                disconnect()
+                            },
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .animateContentSize()
+                                .height(50.dp)
+                                .clip(CircleShape),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                        ) {
+                            if (uiState.isLoading) {
+                                HorizontalDottedProgressBar(
+                                    modifier = Modifier
+                                        .padding(horizontal = 16.dp)
+                                        .height(60.dp)
+                                )
+                            } else {
+                                    Text(
+                                        text = "Disconnect Account",
+                                        modifier = Modifier.padding(horizontal = 32.dp),
+                                        color = Color.White
+                                    )
                             }
                         }
                     }

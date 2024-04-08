@@ -27,4 +27,5 @@ interface AccountService {
 
     suspend fun getAccountInfoById(id: String): UserDetail?
     suspend fun getAccountsInfoByIds(ids: List<String>): List<UserDetail>
+    fun disconnect()
 }
