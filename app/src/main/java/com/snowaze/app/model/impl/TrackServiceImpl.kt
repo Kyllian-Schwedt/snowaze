@@ -3,6 +3,7 @@ package com.snowaze.app.model.impl
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.google.firebase.Firebase
@@ -188,7 +189,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                         SkiLift(
                             id = UUID.fromString(skiLiftJSON.id),
                             name = skiLiftJSON.name,
-                            comments = commentsHashMapToList(skiLiftJSON.comments),
+                            comments = mutableStateOf(commentsHashMapToList(skiLiftJSON.comments)),
                             type = SkiLiftType.valueOf(skiLiftJSON.type),
                             status = try { mutableStateOf(Status.valueOf(skiLiftJSON.status)) } catch (e: Exception) {
                                 Log.e("FirebaseService", "Error parsing Status", e)
@@ -226,7 +227,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                             skiLift.status.value = Status.UNKNOWN
                             Log.e("FirebaseService", "Error parsing Status", e)
                         }
-                        skiLift.comments = commentsHashMapToList(skiLiftJSON.comments)
+                        skiLift.comments.value = commentsHashMapToList(skiLiftJSON.comments)
                         skiLift.marker?.x = skiLift.x
                         skiLift.marker?.y = skiLift.y
                         skiLift.marker?.data?.value = skiLift
@@ -273,7 +274,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                         Track(
                             id = UUID.fromString(trackJSON.id),
                             name = trackJSON.name,
-                            comments = commentsHashMapToList(trackJSON.comments),
+                            comments = mutableStateOf(commentsHashMapToList(trackJSON.comments)),
                             difficulty = Difficulty.valueOf(trackJSON.difficulty),
                             section = trackJSON.section,
                             status = try { mutableStateOf(Status.valueOf(trackJSON.status)) } catch (e: Exception) {
@@ -312,7 +313,7 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                             track.status.value = Status.UNKNOWN
                             Log.e("FirebaseService", "Error parsing Status", e)
                         }
-                        track.comments = commentsHashMapToList(trackJSON.comments)
+                        track.comments.value = commentsHashMapToList(trackJSON.comments)
                         track.marker?.x = track.x
                         track.marker?.y = track.y
                         track.marker?.data?.value = track

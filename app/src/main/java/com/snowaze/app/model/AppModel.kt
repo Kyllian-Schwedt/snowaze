@@ -13,7 +13,7 @@ interface IPath {
     var name: String;
     var hop: List<IPath>;
     var hopIds: List<UUID>;
-    var comments: SnapshotStateList<Comment>;
+    var comments: MutableState<SnapshotStateList<Comment>>;
     var x: Int;
     var y: Int;
 }
@@ -22,7 +22,7 @@ class Track (
     override var id: UUID,
     override var name: String,
     override var hop: List<IPath>,
-    override var comments: SnapshotStateList<Comment>,
+    override var comments: MutableState<SnapshotStateList<Comment>>,
     var section: Int,
     val difficulty: Difficulty,
     var status: MutableState<Status>,
@@ -41,7 +41,7 @@ class Track (
             id = this.id.toString(),
             name = this.name,
             section = this.section,
-            comments = this.comments.associate { it.id.toString() to it.toJson() } as HashMap<String, CommentJSON>,
+            comments = this.comments.value.associate { it.id.toString() to it.toJson() } as HashMap<String, CommentJSON>,
             difficulty = this.difficulty.toString(),
             status = this.status.toString(),
             hop = hop,
@@ -55,7 +55,7 @@ class SkiLift(
     override var id: UUID,
     override var name: String,
     override var hop: List<IPath>,
-    override var comments: SnapshotStateList<Comment>,
+    override var comments: MutableState<SnapshotStateList<Comment>>,
     var type: SkiLiftType,
     var status: MutableState<Status>,
     override var hopIds: List<UUID>,
@@ -72,7 +72,7 @@ class SkiLift(
         return SkiLiftJSON(
             id = this.id.toString(),
             name = this.name,
-            comments = this.comments.associate { it.id.toString() to it.toJson() } as HashMap<String, CommentJSON>,
+            comments = this.comments.value.associate { it.id.toString() to it.toJson() } as HashMap<String, CommentJSON>,
             type = this.type.toString(),
             status = this.status.toString(),
             hop = hop,

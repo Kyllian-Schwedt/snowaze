@@ -81,7 +81,6 @@ fun SkiLiftDetailScreen(
     val accountId = accountService.currentUserId
 
     var newCommentText by rememberSaveable { mutableStateOf("") }
-    val comments = skiLift?.comments ?: emptyList()
 
     if (skiLift != null) {
         Scaffold { paddingValues ->
@@ -230,7 +229,7 @@ fun SkiLiftDetailScreen(
                                 .heightIn(min = 100.dp, max = 160.dp)
                                 .padding(start = 16.dp, end = 16.dp)
                         ) {
-                            if (comments.isEmpty()) {
+                            if (skiLift.comments.value.isEmpty()) {
                                 item {
                                     Text(
                                         text = "Aucun commentaire",
@@ -240,7 +239,7 @@ fun SkiLiftDetailScreen(
                                     )
                                 }
                             } else {
-                                itemsIndexed(comments) { index, comment ->
+                                itemsIndexed(skiLift.comments.value) { index, comment ->
                                     CommentItem(comment, authService = viewModel.accountService)
                                 }
                             }

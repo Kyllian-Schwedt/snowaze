@@ -142,7 +142,7 @@ fun SignUpScreenContent(
                         HorizontalDottedProgressBar()
                     } else {
                         Text(
-                            text = stringResource(id = R.string.sign_in),
+                            text = stringResource(id = R.string.sign_up),
                             color = Color.White
                         )
                     }
@@ -203,7 +203,7 @@ fun SignUpScreenContent(
                         tint = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
                     )
                     Text(
-                        text = "Sign in with Google",
+                        text = "Sign up with Google",
                         style = MaterialTheme.typography.headlineSmall.copy(fontSize = 14.sp),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
