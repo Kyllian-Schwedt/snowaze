@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Send
@@ -54,6 +55,17 @@ fun ChatScreen(
     val timeFormatter = SimpleDateFormat("HH:mm")
     val dateFormatter = SimpleDateFormat("dd/MM")
     var chatBoxValue by rememberSaveable { mutableStateOf("") }
+
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(key1 = chatMessages) {
+        listState.animateScrollToItem(chatMessages.size - 1)
+    }
+
+    LaunchedEffect(key1 = chatMessages.size) {
+        listState.animateScrollToItem(chatMessages.size - 1)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -61,6 +73,7 @@ fun ChatScreen(
 
     ) {
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
