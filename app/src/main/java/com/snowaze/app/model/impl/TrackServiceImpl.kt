@@ -136,6 +136,9 @@ class TrackServiceImpl @Inject constructor(): TrackService {
                 if (path.contains(neighbour)) {
                     continue
                 }
+                if (path.size > 10) {
+                    continue
+                }
                 val newPath = path.toMutableList()
                 newPath.add(neighbour)
                 paths.add(newPath)
@@ -143,22 +146,6 @@ class TrackServiceImpl @Inject constructor(): TrackService {
             i++
         }
         paths = paths.filter { it.last().id == to }.map { it.toMutableList() }.toMutableList()
-        // Remove the path that go several time to the same place
-        for (i in 0 until paths.size) {
-            val path = paths[i]
-            val set = mutableSetOf<UUID>()
-            var valid = true
-            for (IPath in path) {
-                if (set.contains(IPath.id)) {
-                    valid = false
-                    break
-                }
-                set.add(IPath.id)
-            }
-            if (!valid) {
-                paths.removeAt(i)
-            }
-        }
         // Remove the path that are too difficult
         paths = paths.filter { it.all { it is Track && it.difficulty <= maxDifficulty || it is SkiLift } }.toMutableList()
         // Remove the path that are closed
