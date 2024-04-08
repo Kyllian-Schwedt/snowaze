@@ -26,9 +26,7 @@ import com.snowaze.app.model.TrackJSON
 import com.snowaze.app.model.TrackService
 import com.snowaze.app.screens.map.ImageMarker
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.UUID
 import javax.inject.Inject
@@ -170,6 +168,8 @@ class TrackServiceImpl @Inject constructor(): TrackService {
         if (paths.size > 5) {
             paths = paths.subList(0, 5)
         }
+
+        Log.d("FirebaseService", "Path from $from to $to with max difficulty $maxDifficulty: $paths")
 
         return paths
     }
