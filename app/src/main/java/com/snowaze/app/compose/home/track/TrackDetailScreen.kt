@@ -1,6 +1,7 @@
 package com.snowaze.app.compose.home.track
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,8 +20,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Send
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -50,6 +53,7 @@ import com.snowaze.app.common.utils.comment.CommentItem
 import com.snowaze.app.model.AccountService
 import com.snowaze.app.model.Comment
 import com.snowaze.app.model.Difficulty
+import com.snowaze.app.model.IPath
 import com.snowaze.app.model.Status
 import com.snowaze.app.model.Track
 import com.snowaze.app.model.TrackService
@@ -155,6 +159,7 @@ fun TrackDetailScreen(
                             modifier = Modifier
                                 .padding(start = 8.dp, top = 16.dp, bottom = 16.dp)
                         )
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp))
                     }
                     LazyColumn(
                         modifier = Modifier

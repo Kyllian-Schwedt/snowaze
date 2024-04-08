@@ -15,10 +15,12 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SheetState
@@ -41,6 +43,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
@@ -52,6 +55,7 @@ import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
 import com.snowaze.app.R
 import com.snowaze.app.compose.home.track.IconChip
+import com.snowaze.app.compose.progress.HorizontalDottedProgressBar
 import com.snowaze.app.model.Difficulty
 import com.snowaze.app.model.SkiLift
 import com.snowaze.app.model.SkiLiftType
@@ -83,7 +87,7 @@ fun MapScreen(
     val markers by trackService.markers.collectAsState(initial = emptyList())
     BottomSheetScaffold(
         sheetContent = {
-            BottomSheetContent(bottomSheetScaffoldState.bottomSheetState.currentValue, markers)
+            BottomSheetContent(bottomSheetScaffoldState.bottomSheetState.currentValue, markers, navController)
         },
         scaffoldState = bottomSheetScaffoldState,
         // ... other BottomSheetScaffold properties
@@ -99,7 +103,8 @@ fun MapScreen(
                     marker.isSelected.value = true
                     bottomSheetScaffoldState.bottomSheetState.expand()
                 }
-            }
+            },
+            navController = navController
         )
     }
 }
@@ -112,7 +117,8 @@ fun ZoomableImageWithMarkers(
     contentDescription: String,
     markers: List<ImageMarker>,
     onMarkerClick: (ImageMarker) -> Unit,
-    bottomSheetState: SheetState
+    bottomSheetState: SheetState,
+    navController: NavHostController
 ) {
     val zoomableState = rememberZoomableImageState(rememberZoomableState())
     var canvasSize by remember { mutableStateOf(Size.Zero) }
@@ -152,7 +158,8 @@ fun ZoomableImageWithMarkers(
                 canvasSize = canvasSize,
                 zoom = zoomableState.zoomableState.contentTransformation.getMaxScale(),
                 offset = zoomableState.zoomableState.contentTransformation.offset,
-                onClick = { onMarkerClick(marker) }
+                onClick = { onMarkerClick(marker) },
+                navController = navController
             )
         }
     }
@@ -168,7 +175,8 @@ fun Marker(
     canvasSize: Size,
     zoom: Float,
     offset: Offset,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    navController: NavHostController
 ) {
     var markerSize = 30.dp
     val markerSizePx = with(LocalDensity.current) { markerSize.toPx() }
@@ -183,7 +191,7 @@ fun Marker(
     ) {
         val isSelected = marker.isSelected.value
         var colorBorder: Color? = null
-        if(marker.isSelected.value) {
+        if (marker.isSelected.value) {
             Log.d("Marker", "Selected : ${marker.data.value}")
             val color = marker.data.value.let { it ->
                 when (it) {
@@ -195,6 +203,7 @@ fun Marker(
                             Difficulty.BLACK -> Color.DarkGray
                         }
                     }
+
                     is SkiLift -> it.status.let {
                         when (it.value) {
                             Status.OPEN -> Color.Green
@@ -202,27 +211,35 @@ fun Marker(
                             Status.UNKNOWN -> Color.DarkGray
                         }
                     }
+
                     else -> Color.Black
                 }
             }
 
             colorBorder = color
-            markerSize+= 3.dp
+            markerSize += 3.dp
         }
 
         Box(
-            modifier = Modifier.offset { IntOffset(position.x.roundToInt(), position.y.roundToInt()) }
+            modifier = Modifier
+                .offset {
+                    IntOffset(
+                        position.x.roundToInt(),
+                        position.y.roundToInt()
+                    )
+                }
                 .size(markerSize)
                 .clip(RoundedCornerShape(4.dp))
                 .background(Color.Black)
-                .clickable { onClick() }.border(
+                .clickable { onClick() }
+                .border(
                     width = 3.dp,
                     color = colorBorder ?: Color.Transparent,
                     shape = RoundedCornerShape(4.dp),
                 ),
             contentAlignment = Alignment.Center
         ) {
-            if(marker.data.value is Track){
+            if (marker.data.value is Track) {
                 val track = marker.data.value as Track
                 FaIcon(
                     faIcon = FaIcons.Skiing,
@@ -233,9 +250,11 @@ fun Marker(
                             else -> Color.Black
                         }
                     } ?: Color.Black,
-                    modifier = Modifier.size(markerSize).padding(6.dp),
+                    modifier = Modifier
+                        .size(markerSize)
+                        .padding(6.dp),
                 )
-            } else if(marker.data.value is SkiLift){
+            } else if (marker.data.value is SkiLift) {
                 val skiLift = marker.data.value as SkiLift
                 Icon(
                     imageVector = when (skiLift.type) {
@@ -251,7 +270,9 @@ fun Marker(
                             Status.UNKNOWN -> Color.Black
                         }
                     },
-                    modifier = Modifier.size(64.dp).padding(6.dp)
+                    modifier = Modifier
+                        .size(64.dp)
+                        .padding(6.dp)
                 )
             }
         }
@@ -260,12 +281,12 @@ fun Marker(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheetContent(sheetValue: SheetValue, markers: List<ImageMarker>) {
-    val currentMarker = markers.find { it.isSelected.value}
+fun BottomSheetContent(sheetValue: SheetValue, markers: List<ImageMarker>, navController: NavHostController) {
+    val currentMarker = markers.find { it.isSelected.value }
     if (currentMarker != null) {
         when (val data = currentMarker.data.value) {
-            is Track -> TrackDetailContent(data)
-            is SkiLift -> SkiLiftDetailContent(data)
+            is Track -> TrackDetailContent(data, navController = navController)
+            is SkiLift -> SkiLiftDetailContent(data, navController = navController)
             // ... add other content for different marker types
             else -> {} // Handle unknown marker types
         }
@@ -273,55 +294,74 @@ fun BottomSheetContent(sheetValue: SheetValue, markers: List<ImageMarker>) {
 }
 
 @Composable
-fun TrackDetailContent(track: Track) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
+fun TrackDetailContent(track: Track, navController: NavHostController) {
+    Column {
 
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+
+            ) {
+                Text(
+                    modifier = Modifier.padding(bottom = 15.dp),
+                    text = if (track.section != 0) {
+                        "${track.name} - ${track.section}"
+                    } else {
+                        track.name
+                    },
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = track.status.value.toString(),
+                    color = when (track.status.value) {
+                        Status.OPEN -> Color.Green
+                        Status.CLOSED -> Color.Red
+                        else -> {
+                            Color.Black
+                        }
+                    },
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+            }
+            IconChip(
+                text = track.difficulty.value,
+                difficulty = track.difficulty,
+                modifier = Modifier
+                    .height(38.dp)
+                    .requiredWidth(90.dp)
+            )
+        }
+        Button(
+            onClick = {
+                navController.navigate("track/${track.id}")
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .height(50.dp)
+                .clip(CircleShape)
         ) {
             Text(
-                modifier = Modifier.padding(bottom = 15.dp),
-                text = if (track.section != 0) {
-                    "${track.name} - ${track.section}"
-                } else {
-                    track.name
-                },
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
+                text = stringResource(id = R.string.more_info),
+                color = Color.White
             )
-
-            Text(
-                text = track.status.value.toString(),
-                color = when (track.status.value) {
-                    Status.OPEN -> Color.Green
-                    Status.CLOSED -> Color.Red
-                    else -> {
-                        Color.Black
-                    }
-                },
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-
         }
-        IconChip(
-            text = track.difficulty.value,
-            difficulty = track.difficulty,
-            modifier = Modifier
-                .height(38.dp)
-                .requiredWidth(90.dp)
-        )
     }
 }
 
 @Composable
-fun SkiLiftDetailContent(skiLift: SkiLift) {
+fun SkiLiftDetailContent(skiLift: SkiLift, navController: NavHostController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -333,36 +373,54 @@ fun SkiLiftDetailContent(skiLift: SkiLift) {
                 .weight(1f)
 
         ) {
-            Row (
-    modifier = Modifier.fillMaxWidth(),
-) {
-    Icon(
-        imageVector = when (skiLift.type) {
-            SkiLiftType.CHAIRLIFT -> ImageVector.vectorResource(id = R.drawable.chair_lift_icon)
-            SkiLiftType.GONDOLA -> ImageVector.vectorResource(id = R.drawable.gondola_lift_icon)
-            SkiLiftType.TBAR -> ImageVector.vectorResource(id = R.drawable.noun_ski_lift_8803__1_)
-        },
-        contentDescription = "Ski Lift Icon",
-        tint = Color.Black,
-        modifier = Modifier.size(64.dp).padding(end = 32.dp)
-    )
-    Text(
-        text = skiLift.name,
-        fontSize = 20.sp,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier.align(Alignment.CenterVertically)
-    )
-}
-        Text(
-            text = skiLift.status.value.toString(),
-            color = when (skiLift.status.value) {
-                Status.OPEN -> Color.Green
-                Status.CLOSED -> Color.Red
-                Status.UNKNOWN -> Color.Black
-            },
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
-        )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Icon(
+                    imageVector = when (skiLift.type) {
+                        SkiLiftType.CHAIRLIFT -> ImageVector.vectorResource(id = R.drawable.chair_lift_icon)
+                        SkiLiftType.GONDOLA -> ImageVector.vectorResource(id = R.drawable.gondola_lift_icon)
+                        SkiLiftType.TBAR -> ImageVector.vectorResource(id = R.drawable.noun_ski_lift_8803__1_)
+                    },
+                    contentDescription = "Ski Lift Icon",
+                    tint = Color.Black,
+                    modifier = Modifier
+                        .size(64.dp)
+                        .padding(end = 32.dp)
+                )
+                Text(
+                    text = skiLift.name,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+            }
+            Text(
+                text = skiLift.status.value.toString(),
+                color = when (skiLift.status.value) {
+                    Status.OPEN -> Color.Green
+                    Status.CLOSED -> Color.Red
+                    Status.UNKNOWN -> Color.Black
+                },
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Button(
+                onClick = {
+                    navController.navigate("skiLift/${skiLift.id}")
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+                    .height(50.dp)
+                    .clip(CircleShape)
+            ) {
+                    Text(
+                        text = stringResource(id = R.string.more_info),
+                        color = Color.White
+                    )
+            }
         }
     }
 }

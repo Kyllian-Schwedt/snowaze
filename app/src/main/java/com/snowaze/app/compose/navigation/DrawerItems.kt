@@ -11,10 +11,10 @@ import androidx.navigation.NavHostController
 import com.snowaze.app.compose.chat.ChatScreen
 import com.snowaze.app.compose.home.HomeScreen
 import com.snowaze.app.compose.itinerary.ItineraryScreen
-import com.snowaze.app.compose.settings.SettingsScreen
 import com.snowaze.app.data.navigation.NavigationDrawerItem
 import com.snowaze.app.data.navigation.NavigationItem
 import com.snowaze.app.screens.map.MapScreen
+import com.snowaze.app.screens.settings.SettingsScreen
 
 val menuItems = listOf(
     NavigationDrawerItem(
@@ -52,7 +52,7 @@ val menuItems = listOf(
         unselectedIcon = Icons.Outlined.Settings,
         navigationItem = NavigationItem(
             route = "settings",
-            content = { navController: NavHostController -> SettingsScreen(navController) }
+            content = { _: NavHostController -> SettingsScreen() }
         )
     ),
     NavigationDrawerItem(

@@ -155,7 +155,7 @@ fun ExposedDropdownMenu(options: List<String>, label: String?, onValueChange: (S
             onValueChange =onValueChange,
             label = { if(label != null) Text(label) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+            colors = TextFieldDefaultsMaterial.textFieldColors(),
         )
         ExposedDropdownMenu(
             expanded = expanded,

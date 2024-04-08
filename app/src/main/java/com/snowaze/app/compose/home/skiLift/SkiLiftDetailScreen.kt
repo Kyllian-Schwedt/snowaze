@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Send
 import androidx.compose.material3.Icon
@@ -221,6 +222,7 @@ fun SkiLiftDetailScreen(
                                 modifier = Modifier
                                     .padding(start = 8.dp, top = 16.dp, bottom = 16.dp)
                             )
+                            Divider(modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp))
                         }
                         LazyColumn(
                             modifier = Modifier
