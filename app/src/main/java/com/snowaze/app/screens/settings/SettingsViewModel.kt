@@ -2,6 +2,9 @@ package com.snowaze.app.screens.settings
 
 import android.app.Application
 import androidx.compose.runtime.mutableStateOf
+import com.snowaze.app.LOGIN_SCREEN
+import com.snowaze.app.ONBOARDING_SCREEN
+import com.snowaze.app.SnoWazeAppState
 import com.snowaze.app.common.utils.pager.PagerState
 import com.snowaze.app.model.AccountService
 import com.snowaze.app.model.Difficulty
@@ -16,6 +19,8 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val accountService: AccountService, val application: Application
 ): SnoWazeViewModel() {
+
+    var appState : SnoWazeAppState? = null
 
     var uiState = mutableStateOf(SettingsUiState())
         private set
@@ -74,6 +79,12 @@ class SettingsViewModel @Inject constructor(
                 uiState.value = uiState.value.copy(isValid = false)
             }
         }
+    }
+
+    fun disconnect() {
+        accountService.disconnect()
+        //get the appState and navigate to the onboarding screen
+        appState?.navigate(LOGIN_SCREEN)
     }
 
 }

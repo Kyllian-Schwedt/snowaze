@@ -9,8 +9,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import androidx.compose.material3.SnackbarHostState
+import javax.inject.Singleton
 
 @Stable
+@Singleton
 class SnoWazeAppState(
     val snackbarHostState: SnackbarHostState,
     val navController: NavHostController,

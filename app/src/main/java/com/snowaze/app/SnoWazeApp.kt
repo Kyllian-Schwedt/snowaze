@@ -97,7 +97,7 @@ fun NavGraphBuilder.snoWazeAppGraph(appState: SnoWazeAppState) {
         SignUpScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
     }
 
-    composable(MAIN_APP) { DrawerContent(menuItems = menuItems) }
+    composable(MAIN_APP) { DrawerContent(menuItems = menuItems, appState) }
 
     composable(ONBOARDING_SCREEN) {
             OnboardingScreen(openAndPopUp = { route, popUp ->

@@ -8,6 +8,7 @@ import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material.icons.outlined.Settings
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.snowaze.app.SnoWazeAppState
 import com.snowaze.app.compose.chat.ChatScreen
 import com.snowaze.app.compose.home.HomeScreen
 import com.snowaze.app.compose.itinerary.ItineraryScreen
@@ -23,7 +24,7 @@ val menuItems = listOf(
         unselectedIcon = Icons.Outlined.Home,
         navigationItem = NavigationItem(
             route = "home",
-            content = { navController: NavHostController -> HomeScreen(navController, hiltViewModel()) }
+            content = { navController: NavHostController, _ -> HomeScreen(navController, hiltViewModel()) }
         )
     ),
     NavigationDrawerItem(
@@ -32,7 +33,7 @@ val menuItems = listOf(
         unselectedIcon = Icons.Outlined.Map,
         navigationItem = NavigationItem(
             route = "map",
-            content = { navController: NavHostController -> MapScreen(navController) }
+            content = { navController: NavHostController, _ -> MapScreen(navController) }
         ),
         displayBottomBar = false
     ),
@@ -43,7 +44,7 @@ val menuItems = listOf(
         badgeCount = 0,
         navigationItem = NavigationItem(
             route = "itinerary",
-            content = { navController: NavHostController -> ItineraryScreen(navController) }
+            content = { navController: NavHostController, _ -> ItineraryScreen(navController) }
         )
     ),
     NavigationDrawerItem(
@@ -52,7 +53,7 @@ val menuItems = listOf(
         unselectedIcon = Icons.Outlined.Settings,
         navigationItem = NavigationItem(
             route = "settings",
-            content = { _: NavHostController -> SettingsScreen() }
+            content = { _: NavHostController, appState:SnoWazeAppState -> SettingsScreen(appState = appState) }
         )
     ),
     NavigationDrawerItem(
@@ -61,7 +62,7 @@ val menuItems = listOf(
         unselectedIcon = Icons.Outlined.MailOutline,
         navigationItem = NavigationItem(
             route = "chat",
-            content = { navController: NavHostController -> ChatScreen(navController, hiltViewModel()) }
+            content = { navController: NavHostController, _ -> ChatScreen(navController, hiltViewModel()) }
         )
     )
 )
